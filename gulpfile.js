@@ -29,7 +29,7 @@ gulp.task('fonts', function() {
 gulp.task('js', function() {
     return gulp
         .src(config.path.js)
-        .pipe(uglify('game.min.js'))
+        //.pipe(uglify())
         .pipe(gulp.dest(config.path.buildAssets + 'js'));
 });
 
