@@ -14,6 +14,10 @@
 	var PEACH_JUMP = 2;
 	var SCREEN_WIDTH = 16;
 	var SCREEN_HEIGHT = 10;
+
+	var CELL_PLATFORM = 1;
+	var CELL_BLOCK = 2;
+	var CELL_DECORATION = 3;
 	
 	var isWorldMapReady = false;
 
@@ -21,7 +25,7 @@
 	var worldMapDesign = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 8, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 20, 20, 20, 20, 20, 20, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 11, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 8, 8, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 7, 8, 9, 0, 0, 0, 0, 7, 8, 9, 0, 0, 0, 0, 10, 11, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 11, 11, 11, 12, 28, 28, 28, 28, 28, 28, 28, 28, 10, 11, 12, 28, 28, 28, 28, 10, 11, 12, 0, 0, 0, 0, 13, 8, 8, 8, 8, 9, 0, 14, 0, 0, 0, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 11, 12, 0, 0, 0, 0, 10, 11, 11, 11, 11, 12, 0, 17, 0, 0, 0, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 11, 12, 0, 0, 0, 0, 10, 11, 11, 11, 11, 12, 0, 17, 0, 0, 14, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 11, 12, 0, 0, 0, 0, 13, 8, 8, 8, 8, 8, 9, 17, 0, 0, 17, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 16, 8, 8, 9, 0, 0, 10, 11, 11, 11, 11, 11, 12, 17, 0, 0, 17, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 10, 11, 11, 12, 0, 0, 10, 11, 11, 11, 11, 11, 12, 17, 0, 0, 17, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 7, 8, 8, 8, 8, 8, 9, 0, 22, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 24];
 	
 	// Specific tiles list
-	var PLATFORM_TILE_LIST = [7, 8, 9, 22,23];
+	var PLATFORM_TILE_LIST = [7, 8, 9, 13, 15, 16, 18, 22,23, 24];
 	var ANIMATED_TILE_LIST = [25, 28];
 	
 	var WOLRD_MAP_WIDTH = 42;
@@ -51,13 +55,26 @@
 		}.bind(this));
 	};
 	WorldMap.prototype.create = function() {
+		// Draws the first image
+		this.imageList.push(this.drawImage(0));
+		// Clear canvas and draws the second image. The only difference is that we add an offset for alternative images (always just after on tile map)
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		this.imageList.push(this.drawImage(1));
+	};
+	WorldMap.prototype.getCellState = function(x, y) {
+		var cell = worldMapDesign[x + y * WOLRD_MAP_WIDTH];
+		if(PLATFORM_TILE_LIST.indexOf(cell) !== -1) {
+			return CELL_PLATFORM;
+		}
+		return CELL_DECORATION;
+	};
+	WorldMap.prototype.drawImage = function(offset) {
 		// Inits world images. Creates a tmp canvas to draw full world images
 		var canvas = document.createElement("canvas");
 		canvas.width = WOLRD_MAP_WIDTH * CELL_SIZE;
 		canvas.height = WOLRD_MAP_HEIGHT * CELL_SIZE;
 		var context = canvas.getContext("2d");
 
-		// Draws the first image
 		for(var cell in worldMapDesign) {
 			var x = cell % WOLRD_MAP_WIDTH;
 			var y = Math.floor(cell / WOLRD_MAP_WIDTH);
@@ -66,40 +83,18 @@
 				continue;
 			}
 			if(ANIMATED_TILE_LIST.indexOf(tile + 1) !== -1) {
-				++tile;
+				tile += offset;
 			}
 			var tileX = tile % TILE_PER_LINE;
 			var tileY = Math.floor(tile / TILE_PER_LINE);
 			context.drawImage(this.tileSet, tileX * CELL_SIZE, tileY * CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE);
 		}
-		var image1 = new Image();
-		image1.src = canvas.toDataURL();
-		this.imageList.push(image1);
 
-		// Clear canvas and draws the second image. The only difference is that we add an offset for alternative images (always just after on tile map)
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		for(var cell in worldMapDesign) {
-			var x = cell % WOLRD_MAP_WIDTH;
-			var y = Math.floor(cell / WOLRD_MAP_WIDTH);
-			var tile = worldMapDesign[cell] - 1;
-			if(tile < 0) {
-				continue;
-			}
-			var tileX = tile % TILE_PER_LINE;
-			var tileY = Math.floor(tile / TILE_PER_LINE);
-			context.drawImage(this.tileSet, tileX * CELL_SIZE, tileY * CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE);
-		}
-		var image2 = new Image();
-		image2.src = canvas.toDataURL();
-		this.imageList.push(image2);
+		var image = new Image();
+		image.src = canvas.toDataURL();
+		return image;
 	};
-	WorldMap.prototype.getCellState = function(x, y) {
-		var cell = worldMapDesign[x + y * WOLRD_MAP_WIDTH];
-		if(PLATFORM_TILE_LIST.indexOf(cell) !== -1) {
-			return true;
-		}
-		return false;
-	}
+	
 	
 	// Inits canvas
 	var canvas = document.getElementById('peach');
@@ -189,7 +184,8 @@
 
 	Peach.prototype.updatePosition = function() {
 		var isPositionUpdated = false;
-
+		var hasTouchFloor = false;
+		
 		if(this.movingSpeed !== PEACH_STOP) {
 			isPositionUpdated = true;
 			if(++this.currentAnimationSprite > MOVE_TICK_FRAME_NUMBER) {
@@ -198,24 +194,27 @@
 			}
 		}
 
-		var currentPosition = Math.floor(worldMap.x - canvas.width / 2 + PEACH_WIDTH);
-		
-		var state1 = worldMap.getCellState(- Math.floor(currentPosition / CELL_SIZE), Math.floor((peach.y + PEACH_HEIGHT) / CELL_SIZE));
-		var state2 = worldMap.getCellState(- Math.ceil(currentPosition / CELL_SIZE), Math.floor((peach.y + PEACH_HEIGHT) / CELL_SIZE));
-		if(!state1 && ! state2) {
-			peach.startFall();
-		} else {
-			peach.stopFall();
-			this.currentSprite = 0;
-			isPositionUpdated = true;
-		}
-
 		if(!this.isOnGround) {
 			this.currentSprite = PEACH_JUMP;
 			isPositionUpdated = true;
-			this.currentVelocityY += GRAVITY;
+			this.currentVelocityY = Math.min(this.currentVelocityY + GRAVITY, 11);
 			this.y += this.currentVelocityY;
 		}
+
+
+		var currentPosition = Math.floor(worldMap.x - canvas.width / 2 + PEACH_WIDTH);
+		var cellState = worldMap.getCellState(- Math.floor(currentPosition / CELL_SIZE), Math.floor((peach.y + PEACH_HEIGHT) / CELL_SIZE));
+		if(cellState === CELL_PLATFORM) {
+			if(this.currentVelocityY > 0 && this.y % CELL_SIZE < 12) {
+				peach.stopFall();
+				this.currentSprite = 0;
+				isPositionUpdated = true;
+				hasTouchFloor = true;
+			}
+		} else {
+			peach.startFall();
+		}
+
 		return isPositionUpdated;
 	}
 	
@@ -223,9 +222,9 @@
 	 * Constructor
 	 */
 	function Game() {
-		this.skyElement = document.querySelector('#game-parallax-sky');
-		this.backgroundElement = document.getElementById('game-parallax-background');
-		
+		this.skyElement = document.getElementById('sky');
+		this.backgroundElement = document.getElementById('bg');
+
 		// Sets parallax background for sky and trees
 		this.currentSkyPosition = 0;
 		this.currentBackgroundPosition = 0;

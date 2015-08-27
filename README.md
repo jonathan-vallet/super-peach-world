@@ -7,12 +7,13 @@ DONE:
 - background with parallax
 - peach movement
 - variable jump height
+- platforms
+- level design
 
 TODO:
 - game logo
 - pitch with game rules
-- platforms
-- level design
+- collisions with objects
 - animals
 - animals movement
 - animals collection
@@ -24,7 +25,8 @@ OPTIONAL TODO:
 - online scoring with node
 - mobile touch
 - on borders of the world, move peach, not the camera (level design can avoid that)
+- sound
 
 PERF TODO:
-- script to replace var names (constants, functions name) that uglify con't touch
 - set images as base64, not files
+- remove sky, just use a gradient background (evolutive to sunset eventually), but no sky image (2.87ko actually used just for this)

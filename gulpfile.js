@@ -3,7 +3,6 @@ var del             = require('del');
 var notify          = require('gulp-notify');
 var plumber         = require('gulp-plumber');
 var sass            = require('gulp-sass');
-var autoprefixer    = require('gulp-autoprefixer');
 var watch			= require('gulp-watch');
 var runSequence     = require('run-sequence');
 var source          = require('vinyl-source-stream');
@@ -33,7 +32,7 @@ gulp.task('js', function() {
             message: "<%= error.message %>",
             title: "SASS Error"
         })}))
-        //.pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest(config.path.buildAssets + 'js'));
 });
 
@@ -50,7 +49,6 @@ gulp.task('views', function() {
 });
 
 // TODO : optimize css with gulp-cssmin and gulp-uncss
-// TODO : configure autoprefixer only for the targeted browsers
 gulp.task('styles', function() {
     return gulp
         .src(config.path.styles)
@@ -59,7 +57,6 @@ gulp.task('styles', function() {
             title: "SASS Error"
         })}))
         .pipe(sass())
-        .pipe(autoprefixer())
         .pipe(minifyCss())
         .pipe(gulp.dest(config.path.buildAssets+'css'))
         .on('error', function() {
