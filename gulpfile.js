@@ -29,6 +29,10 @@ gulp.task('fonts', function() {
 gulp.task('js', function() {
     return gulp
         .src(config.path.js)
+        .pipe(plumber({errorHandler: notify.onError({
+            message: "<%= error.message %>",
+            title: "SASS Error"
+        })}))
         //.pipe(uglify())
         .pipe(gulp.dest(config.path.buildAssets + 'js'));
 });
