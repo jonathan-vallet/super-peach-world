@@ -3,7 +3,8 @@
 
 	var GRAVITY = 0.5; // Gravity, to make jump go back to the ground. Used for Peach and animals
 	var MOVE_TICK_FRAME_NUMBER = 8; // When peach moves, she has 2 sprites to animate her. This defines the number of frame efore switching sprite used
-	var WORLD_TICK_FRAME_NUMBER = 20; // When peach moves, she has 2 sprites to animate her. This defines the number of frame efore switching sprite used
+	var WORLD_TICK_FRAME_NUMBER = 7; // When peach moves, she has 2 sprites to animate her. This defines the number of frame efore switching sprite used
+	var WORLD_IMAGE_NUMBER = 4; // The number of world images to animated some elements
 	var CELL_SIZE = 32;
 	var PEACH_WIDTH = 32;
 	var PEACH_HEIGHT = 64;
@@ -18,26 +19,26 @@
 	var CELL_PLATFORM = 1;
 	var CELL_BLOCK = 2;
 	var CELL_DECORATION = 3;
-	
+	var CENTER_Y_LIMIT = CELL_SIZE * 4; // The number of pixels to let's peach centered on screen and move world instead of peach
+
 	var isWorldMapReady = false;
 
 	// The wolrd map. Array on tiles par cell.
-	var worldMapDesign = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 8, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 20, 20, 20, 20, 20, 20, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 11, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 8, 8, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 7, 8, 9, 0, 0, 0, 0, 7, 8, 9, 0, 0, 0, 0, 10, 11, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 11, 11, 11, 12, 28, 28, 28, 28, 28, 28, 28, 28, 10, 11, 12, 28, 28, 28, 28, 10, 11, 12, 0, 0, 0, 0, 13, 8, 8, 8, 8, 9, 0, 14, 0, 0, 0, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 11, 12, 0, 0, 0, 0, 10, 11, 11, 11, 11, 12, 0, 17, 0, 0, 0, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 11, 12, 0, 0, 0, 0, 10, 11, 11, 11, 11, 12, 0, 17, 0, 0, 14, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 11, 12, 0, 0, 0, 0, 13, 8, 8, 8, 8, 8, 9, 17, 0, 0, 17, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 16, 8, 8, 9, 0, 0, 10, 11, 11, 11, 11, 11, 12, 17, 0, 0, 17, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 25, 10, 10, 11, 11, 12, 0, 0, 10, 11, 11, 11, 11, 11, 12, 17, 0, 0, 17, 0, 0, 0, 0, 10, 11, 11, 11, 12, 25, 25, 25, 25, 25, 25, 25, 25, 10, 11, 12, 25, 25, 25, 7, 8, 8, 8, 8, 8, 9, 0, 22, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 24];
+	var worldMapDesign = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 26, 26, 26, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 9, 10, 11, 0, 12, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 9, 10, 11, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 33, 33, 13, 14, 15, 0, 16, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 12, 16, 0, 0, 13, 14, 14, 14, 14, 15, 26, 26, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 45, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 21, 10, 10, 19, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 13, 14, 14, 26, 26, 26, 0, 16, 41, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 19, 22, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 0, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 13, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 17, 26, 26, 10, 10, 10, 11, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 0, 0, 18, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 21, 10, 10, 11, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 33, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 14, 14, 15, 45, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 37, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 29, 30, 30, 30, 30, 30, 31, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 31, 24];
 	
 	// Specific tiles list
-	var PLATFORM_TILE_LIST = [7, 8, 9, 13, 15, 16, 18, 22,23, 24];
-	var ANIMATED_TILE_LIST = [25, 28];
-	
-	var WOLRD_MAP_WIDTH = 42;
+	var PLATFORM_TILE_LIST = [9, 10, 11, 17, 19, 21, 23];
+	var BLOCK_TILE_LIST = [18, 22, 25, 26, 27, 29, 30, 31, 41];
+	var ANIMATED_TILE_LIST = [33, 37, 41, 45];
+
+	var WOLRD_MAP_WIDTH = 100;
 	var WOLRD_MAP_HEIGHT = 10;
-	var TILE_PER_LINE = 3; // The number of tile per line on tile image
+	var TILE_PER_LINE = 4; // The number of tile per line on tile image
 	
 	/*
 	 * The world map
 	 */
 	var WorldMap = function() {
-		// Initial position, far on right (peach starts on right side on go back to left, from negative x value to 0
-		this.x = - (WOLRD_MAP_WIDTH - SCREEN_WIDTH) * CELL_SIZE;
 		// Loads assets
 		// TODO: merge it wih peach, it's the same image! (make a preload state, when image is loaded, inits peach and the world, then start game...)
 		this.tileSet = new Image();
@@ -51,24 +52,27 @@
 		this.tileSet.addEventListener('load', function() {
 			this.create();
 			isWorldMapReady = true;
-			game.draw();
 		}.bind(this));
 	};
 	WorldMap.prototype.create = function() {
 		// Draws the first image
-		this.imageList.push(this.drawImage(0));
-		// Clear canvas and draws the second image. The only difference is that we add an offset for alternative images (always just after on tile map)
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		this.imageList.push(this.drawImage(1));
+		for(var imageNumber = 0; imageNumber < WORLD_IMAGE_NUMBER; ++imageNumber) {
+			// Clear canvas and draws the second image. The only difference is that we add an offset for alternative images (always just after on tile map)
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			this.imageList.push(this.generateImage(imageNumber));
+		}
 	};
 	WorldMap.prototype.getCellState = function(x, y) {
 		var cell = worldMapDesign[x + y * WOLRD_MAP_WIDTH];
 		if(PLATFORM_TILE_LIST.indexOf(cell) !== -1) {
 			return CELL_PLATFORM;
 		}
+		if(BLOCK_TILE_LIST.indexOf(cell) !== -1) {
+			return CELL_BLOCK;
+		}
 		return CELL_DECORATION;
 	};
-	WorldMap.prototype.drawImage = function(offset) {
+	WorldMap.prototype.generateImage = function(offset) {
 		// Inits world images. Creates a tmp canvas to draw full world images
 		var canvas = document.createElement("canvas");
 		canvas.width = WOLRD_MAP_WIDTH * CELL_SIZE;
@@ -94,7 +98,10 @@
 		image.src = canvas.toDataURL();
 		return image;
 	};
-	
+	WorldMap.prototype.updatePosition = function() {
+		this.x -= 1.2 * peach.movingSpeed * PEACH_VELOCITY_X;
+		this.y = peach.y < CENTER_Y_LIMIT ? CENTER_Y_LIMIT - peach.y : 0;
+	};
 	
 	// Inits canvas
 	var canvas = document.getElementById('peach');
@@ -105,27 +112,18 @@
 	var canvasHeight = canvas.height;
 	
 	function Peach() {
-		this.currentAnimationSprite = 0;
-		this.direction = PEACH_LEFT; // Sets initial direction
-		this.currentVelocityY = 0;
-
-		this.currentSprite = 0;
 		// Inits Peach
 		this.image = new Image();
 		this.image.src = 'assets/img/tileset.png';
-		// Start position
-		this.x = CELL_SIZE * SCREEN_WIDTH / 2;
-		this.y = CELL_SIZE * (SCREEN_HEIGHT - 3);
-
-		this.movingSpeed = PEACH_STOP; // If Peach is moving, and its direction (-1 = left, 1 = right)
-    	this.spriteDirection = PEACH_LEFT;
-		this.isOnGround = true; // If peach is on the ground = not perfoming a jump, then is able to jump
-
+		this.isJumping = false;
 		window.addEventListener('keydown', function(k) {
 		    switch(k.keyCode) {
 		        case 32: //up
 		        case 38: //space
-		        	this.startJump();
+		        	// Player has to release and press again to make a new jump
+		        	if(!this.isJumping) {
+			        	this.startJump();
+		        	}
 		            break;
 		        case 37: //left
 		        	this.movingSpeed = PEACH_LEFT;
@@ -142,13 +140,13 @@
 		    switch(k.keyCode) {
 		        case 32: //up
 		        case 38: //up
+		        	this.isJumping = false;
 		        	this.stopJump();
 		            break;
 		        case 37: //left
 		        case 39: //right
 		        	this.movingSpeed = PEACH_STOP;
 		        	this.currentSprite = 0; // Resets move animation
-		        	game.draw(); // Redraw image to reset move state
 		            break;
 		    }
 		}.bind(this));
@@ -158,15 +156,16 @@
 		if(this.isOnGround) {
 			this.currentVelocityY = -12;
 			this.isOnGround = false;
+			this.isJumping = true;
 		}
 	};
-	
+
 	Peach.prototype.stopJump = function() {
 	    if(this.currentVelocityY < -4) {
 	    	this.currentVelocityY = -4;
 	    }
 	};
-	
+
 	Peach.prototype.startFall = function() {
 		if(this.isOnGround) {
 			this.currentVelocityY = .5;
@@ -183,66 +182,56 @@
 	};
 
 	Peach.prototype.updatePosition = function() {
-		var isPositionUpdated = false;
 		var hasTouchFloor = false;
-		
+		// Updates X position
 		if(this.movingSpeed !== PEACH_STOP) {
-			isPositionUpdated = true;
 			if(++this.currentAnimationSprite > MOVE_TICK_FRAME_NUMBER) {
 				this.currentAnimationSprite = 0;
 				this.currentSprite = ++this.currentSprite % 2;
 			}
 		}
 
+		// Updates Y position
 		if(!this.isOnGround) {
 			this.currentSprite = PEACH_JUMP;
-			isPositionUpdated = true;
 			this.currentVelocityY = Math.min(this.currentVelocityY + GRAVITY, 11);
 			this.y += this.currentVelocityY;
 		}
-
-
-		var currentPosition = Math.floor(worldMap.x - canvas.width / 2 + PEACH_WIDTH);
-		var cellState = worldMap.getCellState(- Math.floor(currentPosition / CELL_SIZE), Math.floor((peach.y + PEACH_HEIGHT) / CELL_SIZE));
-		if(cellState === CELL_PLATFORM) {
-			if(this.currentVelocityY > 0 && this.y % CELL_SIZE < 12) {
-				peach.stopFall();
-				this.currentSprite = 0;
-				isPositionUpdated = true;
-				hasTouchFloor = true;
-			}
-		} else {
-			peach.startFall();
+		
+		// At the bottom of the game = death, resets game
+		if(this.y > SCREEN_HEIGHT * CELL_SIZE) {
+			game.reset();
+			return;
 		}
 
-		return isPositionUpdated;
+		// Checks Y collision/platform
+		if(this.currentVelocityY >= 0) { // If is not jumping top, checks the cell below
+			var bottomCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH) / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
+			if(bottomCellState === CELL_PLATFORM || bottomCellState === CELL_BLOCK) {
+				if(this.currentVelocityY > 0 && this.y % CELL_SIZE < 12) {
+					this.stopFall();
+					this.currentSprite = 0;
+					hasTouchFloor = true;
+				}
+			}
+			else {
+				this.startFall();
+			}
+		} else {
+			// If is jumping top, checks if there is a block above. Checks a little before and after peach center (20%)
+			var topLeftCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * 1.2) / CELL_SIZE), Math.floor((this.y) / CELL_SIZE));
+			var topRightCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * 0.8) / CELL_SIZE), Math.floor((this.y) / CELL_SIZE));
+			if(topLeftCellState === CELL_BLOCK || topRightCellState === CELL_BLOCK) {
+				this.currentVelocityY = 0; // Stops jump at this height
+			}
+		}
 	}
 	
 	/**
 	 * Constructor
 	 */
 	function Game() {
-		this.skyElement = document.getElementById('sky');
 		this.backgroundElement = document.getElementById('bg');
-
-		// Sets parallax background for sky and trees
-		this.currentSkyPosition = 0;
-		this.currentBackgroundPosition = 0;
-
-		var gameLoop = function () {
-			window.requestAnimationFrame(gameLoop.bind(this));
-			playFrameEvents();
-		};
-		
-		var playFrameEvents = function() {
-			if(peach.updatePosition()) {
-				this.updateBackgroundPosition();
-				this.draw();
-			}
-		}.bind(this);
-		
-		gameLoop();
-		this.draw();
 	};
 
 	Game.prototype.draw = function() {
@@ -253,16 +242,17 @@
 		
 		if(++worldMap.currentAnimationSprite > WORLD_TICK_FRAME_NUMBER) {
 			worldMap.currentAnimationSprite = 0;
-			worldMap.currentDisplayedImage = ++worldMap.currentDisplayedImage % 2;
+			worldMap.currentDisplayedImage = ++worldMap.currentDisplayedImage % WORLD_IMAGE_NUMBER;
 		}
 		var worldImage = worldMap.imageList[worldMap.currentDisplayedImage];
-		context.drawImage(worldImage, Math.floor(worldMap.x), 0);
+
+		context.drawImage(worldImage, Math.floor(worldMap.x), worldMap.y);
 		context.save();
-		context.translate(peach.x, peach.y);
+		context.translate(peach.x, Math.max(CENTER_Y_LIMIT, peach.y));
 		if(peach.spriteDirection === PEACH_LEFT) {
 			context.scale(-1, 1);
 		}
-		
+
 		context.drawImage(peach.image, peach.currentSprite * PEACH_WIDTH, 0, PEACH_WIDTH, PEACH_HEIGHT, -PEACH_WIDTH / 2, 0, PEACH_WIDTH, PEACH_HEIGHT);
 		context.restore();
 
@@ -285,17 +275,50 @@
 	}
 	
 	Game.prototype.updateBackgroundPosition = function() {
-		this.currentBackgroundPosition -= 0.8 * peach.movingSpeed * PEACH_VELOCITY_X;
-		this.currentSkyPosition -= 0.5 * peach.movingSpeed * PEACH_VELOCITY_X;
-		this.backgroundElement.style.backgroundPositionX = Math.floor(this.currentBackgroundPosition) + 'px';
-		this.skyElement.style.backgroundPositionX = Math.floor(this.currentSkyPosition) + 'px';
-		worldMap.x -= 1.2 * peach.movingSpeed * PEACH_VELOCITY_X;
+		this.backgroundElement.style.backgroundPositionX = Math.floor(0.5 * worldMap.x) + 'px';
+		this.backgroundElement.style.backgroundPositionY = Math.floor(0.3 * worldMap.y ) + 'px';
+		document.getElementById('game').style.backgroundPositionY = Math.floor(0.05 * worldMap.y ) + 'px';
+	}
+	
+	Game.prototype.reset = function() {
+		// Initial position, far on right (peach starts on right side on go back to left, from negative x value to 0
+		worldMap.x = - (WOLRD_MAP_WIDTH - SCREEN_WIDTH) * CELL_SIZE;
+
+		// Inits peach
+		peach.currentAnimationSprite = 0;
+		peach.currentSprite = 0;
+		// Start position
+		peach.x = CELL_SIZE * SCREEN_WIDTH / 2;
+		peach.y = CELL_SIZE * (SCREEN_HEIGHT - 3);
+		peach.currentVelocityY = 0;
+		peach.movingSpeed = PEACH_STOP; // If Peach is moving, and its direction (-1 = left, 1 = right)
+		peach.spriteDirection = PEACH_LEFT;
+	}
+
+	Game.prototype.start = function() {
+		this.reset();
+		
+		var gameLoop = function () {
+			window.requestAnimationFrame(gameLoop.bind(this));
+			playFrameEvents();
+		};
+		
+		var playFrameEvents = function() {
+			peach.updatePosition();
+			worldMap.updatePosition();
+			this.updateBackgroundPosition();
+			this.draw();
+		}.bind(this);
+		
+		gameLoop();
+		
+		this.draw();
 	}
 
 	var worldMap = new WorldMap();
 	var peach = new Peach();
 	var game = new Game();
-	game.draw();
+	game.start();
 	
 	var $ = {};
 	$.definitions = {};
