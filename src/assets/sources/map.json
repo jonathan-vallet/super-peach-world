@@ -23,7 +23,7 @@
         {
          "firstgid":1,
          "image":"..\/img\/tileset.png",
-         "imageheight":384,
+         "imageheight":448,
          "imagewidth":128,
          "margin":0,
          "name":"tileset",
@@ -32,7 +32,7 @@
 
             },
          "spacing":0,
-         "tilecount":48,
+         "tilecount":56,
          "tileheight":32,
          "tilewidth":32
         }],

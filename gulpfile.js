@@ -32,7 +32,7 @@ gulp.task('js', function() {
             message: "<%= error.message %>",
             title: "SASS Error"
         })}))
-        .pipe(uglify())
+        //.pipe(uglify())
         .pipe(gulp.dest(config.path.buildAssets + 'js'));
 });
 

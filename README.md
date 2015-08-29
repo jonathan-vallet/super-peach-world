@@ -9,13 +9,13 @@ DONE:
 - variable jump height
 - platforms
 - level design
+- collisions with objects
+- added goombas (sprite, animation, movement, collision)
 
 TODO:
 - game logo
 - pitch with game rules
-- collisions with objects
-- animals
-- animals movement
+- several animals type (turtles)
 - animals collection
 - scoring
 - timer
@@ -29,4 +29,3 @@ OPTIONAL TODO:
 
 PERF TODO:
 - set images as base64, not files
-- remove sky, just use a gradient background (evolutive to sunset eventually), but no sky image (2.87ko actually used just for this)

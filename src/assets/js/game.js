@@ -2,33 +2,50 @@
 	'use strict';
 
 	var GRAVITY = 0.5; // Gravity, to make jump go back to the ground. Used for Peach and animals
-	var MOVE_TICK_FRAME_NUMBER = 8; // When peach moves, she has 2 sprites to animate her. This defines the number of frame efore switching sprite used
-	var WORLD_TICK_FRAME_NUMBER = 7; // When peach moves, she has 2 sprites to animate her. This defines the number of frame efore switching sprite used
+	var MOVE_TICK_FRAME_NUMBER = 8; // When peach moves, she has 2 sprites to animate her. This defines the number of frame before switching sprite used
+	var WORLD_TICK_FRAME_NUMBER = 7; // The number of frame before switching wrld image to animate it
 	var WORLD_IMAGE_NUMBER = 4; // The number of world images to animated some elements
 	var CELL_SIZE = 32;
 	var PEACH_WIDTH = 32;
 	var PEACH_HEIGHT = 64;
 	var PEACH_VELOCITY_X = 3; // The number of pixels to move every frame
-	var PEACH_STOP = 0;
-	var PEACH_RIGHT = 1;
-	var PEACH_LEFT = -1;
 	var PEACH_JUMP = 2;
+	
+	// Animal type list (specific sprites and animation)
+	var ANIMAL_TYPE_GOOMBA = 1;
+	var ANIMAL_TYPE_TURTLE = 2;
+	
+	// Movement direction
+	var MOVE_LEFT = -1;
+	var MOVE_STOP = 0;
+	var MOVE_RIGHT = 1;
+	
 	var SCREEN_WIDTH = 16;
 	var SCREEN_HEIGHT = 10;
+	
+	// Animal position on tileset
+	var GOOMBA_SPRITE_X = 2;
+	var GOOMBA_SPRITE_Y = 12;
+	var GOOMBA_VELOCITY_X = 1.5; // The number of pixels a animal moves every frame
 
 	var CELL_PLATFORM = 1;
 	var CELL_BLOCK = 2;
-	var CELL_DECORATION = 3;
-	var CENTER_Y_LIMIT = CELL_SIZE * 4; // The number of pixels to let's peach centered on screen and move world instead of peach
+	var CELL_EMPTY = 3;
+	var CENTER_Y_LIMIT = CELL_SIZE * 2; // The number of pixels to let's peach centered on screen and move world instead of peach
 
 	var isWorldMapReady = false;
 
 	// The wolrd map. Array on tiles par cell.
-	var worldMapDesign = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 9, 10, 11, 0, 12, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 9, 10, 11, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 33, 33, 13, 14, 15, 0, 16, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 12, 16, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 45, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 21, 10, 10, 19, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 19, 22, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 0, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 13, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 0, 0, 18, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 21, 10, 10, 11, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 33, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 14, 14, 15, 45, 0, 13, 14, 27, 14, 14, 14, 15, 16, 0, 0, 16, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 37, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 29, 30, 30, 30, 30, 30, 31, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 31, 24];
-	
+	var worldMapDesign = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 9, 10, 11, 0, 12, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 9, 10, 11, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 33, 33, 13, 14, 15, 0, 16, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 12, 16, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 45, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 21, 10, 10, 19, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 19, 22, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 0, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 13, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 0, 0, 18, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 21, 10, 10, 11, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 33, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 14, 14, 15, 45, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 37, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 29, 30, 30, 30, 30, 30, 31, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 31, 24];
+ 	var animalList =
+	[
+	 	{x: 15, y: 5},
+	 	{x: 51, y: 5},
+	 	{x: 90, y: 8}
+	];
 	// Specific tiles list
 	var PLATFORM_TILE_LIST = [9, 10, 11, 17, 19, 21, 23];
-	var BLOCK_TILE_LIST = [18, 22, 25, 26, 27, 29, 30, 31, 41];
+	var BLOCK_TILE_LIST = [18, 22, 25, 26, 27, 29, 30, 31];
 	var ANIMATED_TILE_LIST = [33, 37, 41, 45];
 
 	var WOLRD_MAP_WIDTH = 100;
@@ -39,20 +56,11 @@
 	 * The world map
 	 */
 	var WorldMap = function() {
-		// Loads assets
-		// TODO: merge it wih peach, it's the same image! (make a preload state, when image is loaded, inits peach and the world, then start game...)
-		this.tileSet = new Image();
-		this.tileSet.src = 'assets/img/tileset.png';
 		
 		// World is made of 2 images, to animate some elements (waterfalls...)
 		this.currentAnimationSprite = 0; // The current frame of current image, to know when we have to change it
 		this.currentDisplayedImage = 0; // The current displayed image (0 or 1)
 		this.imageList = []; // The world image list
-		
-		this.tileSet.addEventListener('load', function() {
-			this.create();
-			isWorldMapReady = true;
-		}.bind(this));
 	};
 	WorldMap.prototype.create = function() {
 		// Draws the first image
@@ -61,6 +69,7 @@
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			this.imageList.push(this.generateImage(imageNumber));
 		}
+		isWorldMapReady = true;
 	};
 	WorldMap.prototype.getCellState = function(x, y) {
 		var cell = worldMapDesign[x + y * WOLRD_MAP_WIDTH];
@@ -70,7 +79,7 @@
 		if(BLOCK_TILE_LIST.indexOf(cell) !== -1) {
 			return CELL_BLOCK;
 		}
-		return CELL_DECORATION;
+		return CELL_EMPTY;
 	};
 	WorldMap.prototype.generateImage = function(offset) {
 		// Inits world images. Creates a tmp canvas to draw full world images
@@ -91,7 +100,7 @@
 			}
 			var tileX = tile % TILE_PER_LINE;
 			var tileY = Math.floor(tile / TILE_PER_LINE);
-			context.drawImage(this.tileSet, tileX * CELL_SIZE, tileY * CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE);
+			context.drawImage(game.tileSet, tileX * CELL_SIZE, tileY * CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE);
 		}
 
 		var image = new Image();
@@ -100,7 +109,7 @@
 	};
 	WorldMap.prototype.updatePosition = function() {
 		if(!peach.hasBlockCollision) {
-			this.x -= 1.2 * peach.movingSpeed * PEACH_VELOCITY_X;
+			this.x -= 1.2 * peach.moveDirection * PEACH_VELOCITY_X;
 		}
 		this.y = peach.y < CENTER_Y_LIMIT ? CENTER_Y_LIMIT - peach.y : 0;
 	};
@@ -113,10 +122,42 @@
 	var canvasWidth = canvas.width;
 	var canvasHeight = canvas.height;
 	
+	function Animal(x, y) {
+		this.x = x * CELL_SIZE;
+		this.y = y * CELL_SIZE;
+		peach.currentVelocityY = 0;
+		this.moveDirection = MOVE_RIGHT;
+		this.currentAnimationSprite = 0;
+		this.currentSprite = 0;
+		// Position on the tileset
+		this.spriteX = 2;
+		this.spriteY = 12;
+	};
+	Animal.prototype.updatePosition = function() {
+		this.x += GOOMBA_VELOCITY_X * this.moveDirection;
+		// Checks collision/fall state
+		if(this.moveDirection === MOVE_LEFT) {
+			// Checks left cells (peach is 2 cells high) While jumping, peach can be in contact with 3 cells. (floor, floor + 1, ceil + 1). When exactly on a ceil, floor = ceil
+			var leftCellState = worldMap.getCellState(Math.floor(this.x / CELL_SIZE) - 1, Math.floor(this.y / CELL_SIZE));
+			var bottomLeftCellState = worldMap.getCellState(Math.floor(this.x / CELL_SIZE) - 1, Math.floor(this.y / CELL_SIZE) + 1);
+			if(leftCellState === CELL_BLOCK || bottomLeftCellState === CELL_EMPTY) {
+				this.setOppositeDirection();
+			}
+		} else {
+			var rightCellState = worldMap.getCellState(Math.floor(this.x / CELL_SIZE), Math.floor(this.y / CELL_SIZE));
+			var bottomRightCellState = worldMap.getCellState(Math.floor(this.x / CELL_SIZE), Math.floor(this.y / CELL_SIZE) + 1);
+			if(rightCellState === CELL_BLOCK || bottomRightCellState === CELL_EMPTY) {
+				this.setOppositeDirection();
+			}
+		}
+		
+	};
+	Animal.prototype.setOppositeDirection = function() {
+		this.moveDirection = this.moveDirection === MOVE_LEFT ?  MOVE_RIGHT : MOVE_LEFT;
+	}
+	
 	function Peach() {
 		// Inits Peach
-		this.image = new Image();
-		this.image.src = 'assets/img/tileset.png';
 		this.isJumping = false;
 		window.addEventListener('keydown', function(k) {
 		    switch(k.keyCode) {
@@ -128,12 +169,12 @@
 		        	}
 		            break;
 		        case 37: //left
-		        	this.movingSpeed = PEACH_LEFT;
-		        	this.spriteDirection = PEACH_LEFT;
+		        	this.moveDirection = MOVE_LEFT;
+		        	this.spriteDirection = MOVE_LEFT;
 		            break;
 		        case 39: //right
-		        	this.movingSpeed = PEACH_RIGHT;
-		        	this.spriteDirection = PEACH_RIGHT;
+		        	this.moveDirection = MOVE_RIGHT;
+		        	this.spriteDirection = MOVE_RIGHT;
 		            break;
 		    }
 		}.bind(this));
@@ -147,7 +188,7 @@
 		            break;
 		        case 37: //left
 		        case 39: //right
-		        	this.movingSpeed = PEACH_STOP;
+		        	this.moveDirection = MOVE_STOP;
 		        	this.currentSprite = 0; // Resets move animation
 		            break;
 		    }
@@ -176,35 +217,38 @@
 	};
 
 	Peach.prototype.stopFall = function() {
-		if(!this.isOnGround && this.currentVelocityY > 0) {
-			this.currentVelocityY = 0;
-			this.isOnGround = true;
-			this.y = Math.floor(this.y / CELL_SIZE) * CELL_SIZE;
-		}
+		this.currentVelocityY = 0;
+		this.isOnGround = true;
+		this.y = Math.floor(this.y / CELL_SIZE) * CELL_SIZE;
 	};
 
 	Peach.prototype.updatePosition = function() {
 		var hasTouchFloor = false;
+		// Gets the current cell where peach is (center bottom position, at her feets). For collision detection, add/remove 0.5 * PEACH_WIDTH to get correct cell to check
+		var cellX = (worldMap.x - canvas.width / 2 + PEACH_WIDTH) / CELL_SIZE;
+		var cellY = Math.floor((this.y) / CELL_SIZE);	
+
 		// Updates X position
-		if(this.movingSpeed !== PEACH_STOP) {
+		if(this.moveDirection !== MOVE_STOP) {
 			if(++this.currentAnimationSprite > MOVE_TICK_FRAME_NUMBER) {
 				this.currentAnimationSprite = 0;
 				this.currentSprite = ++this.currentSprite % 2;
 			}
 			this.hasBlockCollision = false;
-			if(this.movingSpeed === PEACH_LEFT) {
+			
+			if(this.moveDirection === MOVE_LEFT) {
 				// Checks left cells (peach is 2 cells high) While jumping, peach can be in contact with 3 cells. (floor, floor + 1, ceil + 1). When exactly on a ceil, floor = ceil
-				var topLeftCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * 1.5) / CELL_SIZE), Math.floor((this.y) / CELL_SIZE));
-				var leftCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * 1.5) / CELL_SIZE), Math.floor((this.y) / CELL_SIZE) + 1);
-				var bottomLeftCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * 1.5) / CELL_SIZE), Math.ceil((this.y) / CELL_SIZE) + 1);
+				var topLeftCellState = worldMap.getCellState(- Math.floor(cellX + .5 * PEACH_WIDTH / CELL_SIZE), cellY);
+				var leftCellState = worldMap.getCellState(- Math.floor(cellX  + .5 * PEACH_WIDTH / CELL_SIZE), cellY + 1);
+				var bottomLeftCellState = worldMap.getCellState(- Math.floor(cellX  + .5 * PEACH_WIDTH / CELL_SIZE), Math.ceil((this.y) / CELL_SIZE) + 1);
 				if(topLeftCellState === CELL_BLOCK || leftCellState === CELL_BLOCK || bottomLeftCellState === CELL_BLOCK) {
 					this.hasBlockCollision = true;
 				}
 			} else {
 				// Checks right cells (peach is 2 celles high)
-				var topRightCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * .5) / CELL_SIZE), Math.floor((this.y) / CELL_SIZE));
-				var rightCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * .5) / CELL_SIZE), Math.floor((this.y) / CELL_SIZE) + 1);
-				var bottomRightCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * .5) / CELL_SIZE), Math.ceil((this.y) / CELL_SIZE) + 1);
+				var topRightCellState = worldMap.getCellState(- Math.floor(cellX - .5 * PEACH_WIDTH / CELL_SIZE), cellY);
+				var rightCellState = worldMap.getCellState(- Math.floor(cellX - .5 * PEACH_WIDTH / CELL_SIZE), cellY + 1);
+				var bottomRightCellState = worldMap.getCellState(- Math.floor(cellX - .5 * PEACH_WIDTH / CELL_SIZE), Math.ceil((this.y) / CELL_SIZE) + 1);
 				if(topRightCellState === CELL_BLOCK || rightCellState === CELL_BLOCK || bottomRightCellState === CELL_BLOCK) {
 					this.hasBlockCollision = true;
 				}
@@ -226,7 +270,7 @@
 
 		// Checks Y collision/platform
 		if(this.currentVelocityY >= 0) { // If is not jumping top, checks the cell below
-			var bottomCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH) / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
+			var bottomCellState = worldMap.getCellState(- Math.floor(cellX), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
 			if(bottomCellState === CELL_PLATFORM || bottomCellState === CELL_BLOCK) {
 				if(this.currentVelocityY > 0 && this.y % CELL_SIZE < 12) {
 					this.stopFall();
@@ -239,8 +283,8 @@
 			}
 		} else {
 			// If is jumping top, checks if there is a block above. Checks a little before and after peach center (20%)
-			var topLeftCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * 1.2) / CELL_SIZE), Math.floor((this.y) / CELL_SIZE));
-			var topRightCellState = worldMap.getCellState(- Math.floor((worldMap.x - canvas.width / 2 + PEACH_WIDTH * 0.8) / CELL_SIZE), Math.floor((this.y) / CELL_SIZE));
+			var topLeftCellState = worldMap.getCellState(- Math.floor(cellX + .2 * PEACH_WIDTH / CELL_SIZE), cellY);
+			var topRightCellState = worldMap.getCellState(- Math.floor(cellX - .2 * PEACH_WIDTH / CELL_SIZE), cellY);
 			if(topLeftCellState === CELL_BLOCK || topRightCellState === CELL_BLOCK) {
 				this.currentVelocityY = 0; // Stops jump at this height
 			}
@@ -269,13 +313,25 @@
 		context.drawImage(worldImage, Math.floor(worldMap.x), worldMap.y);
 		context.save();
 		context.translate(peach.x, Math.max(CENTER_Y_LIMIT, peach.y));
-		if(peach.spriteDirection === PEACH_LEFT) {
+		if(peach.spriteDirection === MOVE_LEFT) {
 			context.scale(-1, 1);
 		}
 
-		context.drawImage(peach.image, peach.currentSprite * PEACH_WIDTH, 0, PEACH_WIDTH, PEACH_HEIGHT, -PEACH_WIDTH / 2, 0, PEACH_WIDTH, PEACH_HEIGHT);
+		context.drawImage(game.tileSet, peach.currentSprite * PEACH_WIDTH, 0, PEACH_WIDTH, PEACH_HEIGHT, -PEACH_WIDTH / 2, 0, PEACH_WIDTH, PEACH_HEIGHT);
 		context.restore();
 
+		for(var animalIndex in this.animalList) {
+			var animal = this.animalList[animalIndex];
+			context.save();
+			if(worldMap.currentDisplayedImage % 2) {
+				context.translate(Math.floor(worldMap.x) + animal.x,  worldMap.y + animal.y);
+				context.scale(-1, 1);
+			} else {
+				context.translate(Math.floor(worldMap.x) + animal.x - CELL_SIZE,  worldMap.y + animal.y);
+			}
+			context.drawImage(game.tileSet, GOOMBA_SPRITE_X * CELL_SIZE, GOOMBA_SPRITE_Y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 0, 0, CELL_SIZE, CELL_SIZE);
+			context.restore();
+		}
 		/*
 		context.beginPath();
 		context.rect(0, 0, canvasWidth, canvasHeight);
@@ -311,12 +367,26 @@
 		peach.x = CELL_SIZE * SCREEN_WIDTH / 2;
 		peach.y = CELL_SIZE * (SCREEN_HEIGHT - 3);
 		peach.currentVelocityY = 0;
-		peach.movingSpeed = PEACH_STOP; // If Peach is moving, and its direction (-1 = left, 1 = right)
-		peach.spriteDirection = PEACH_LEFT;
+		peach.moveDirection = MOVE_STOP; // If Peach is moving, and its direction (-1 = left, 0 = stop, 1 = right)
+		peach.spriteDirection = MOVE_LEFT; // when movement is stopped, keeps the curret sprite direction
 		peach.hasBlockCollision = false;
+		
+		this.animalList = [];
+		// Inits animals
+		for(var index in animalList) {
+			this.animalList.push(new Animal(animalList[index].x, animalList[index].y));
+		}
 	}
 
 	Game.prototype.start = function() {
+		// Loads assets
+		this.tileSet = new Image();
+		this.tileSet.src = 'assets/img/tileset.png';
+		this.tileSet.addEventListener('load', function() {
+			worldMap.create();
+		}.bind(this));
+
+		
 		this.reset();
 		
 		var gameLoop = function () {
@@ -327,6 +397,9 @@
 		var playFrameEvents = function() {
 			peach.updatePosition();
 			worldMap.updatePosition();
+			for(var index in this.animalList) {
+				this.animalList[index].updatePosition();
+			}
 			this.updateBackgroundPosition();
 			this.draw();
 		}.bind(this);
