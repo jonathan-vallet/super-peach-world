@@ -27,7 +27,14 @@
 	var GOOMBA_SPRITE_X = 2;
 	var GOOMBA_SPRITE_Y = 12;
 	var GOOMBA_VELOCITY_X = 1.5; // The number of pixels a animal moves every frame
+	var GOOMBA_TICK_FRAME_NUMBER = 8;
 
+	var TURTLE_SPRITE_X = 0;
+	var TURTLE_SPRITE_Y = 12;
+	var TURTLE_VELOCITY_X = .8; // The number of pixels a animal moves every frame
+	var TURTLE_TICK_FRAME_NUMBER = 24;
+	var TURTLE_IMAGE_NUMBER = 2;
+	
 	var CELL_PLATFORM = 1;
 	var CELL_BLOCK = 2;
 	var CELL_EMPTY = 3;
@@ -39,9 +46,9 @@
 	var worldMapDesign = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 9, 10, 11, 0, 12, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 9, 10, 11, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 33, 33, 13, 14, 15, 0, 16, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 12, 16, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 45, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 21, 10, 10, 19, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 19, 22, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 0, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 13, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 0, 0, 18, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 21, 10, 10, 11, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 33, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 14, 14, 15, 45, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 37, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 29, 30, 30, 30, 30, 30, 31, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 31, 24];
  	var animalList =
 	[
-	 	{x: 15, y: 5},
-	 	{x: 51, y: 5},
-	 	{x: 90, y: 8}
+	 	//{x: 15, y: 5},
+	 	//{x: 51, y: 5},
+	 	{x: 90, y: 8, type: ANIMAL_TYPE_TURTLE}
 	];
 	// Specific tiles list
 	var PLATFORM_TILE_LIST = [9, 10, 11, 17, 19, 21, 23];
@@ -122,16 +129,25 @@
 	var canvasWidth = canvas.width;
 	var canvasHeight = canvas.height;
 	
-	function Animal(x, y) {
+	function Animal(x, y, type) {
 		this.x = x * CELL_SIZE;
 		this.y = y * CELL_SIZE;
-		peach.currentVelocityY = 0;
+		this.type = type;
 		this.moveDirection = MOVE_RIGHT;
-		this.currentAnimationSprite = 0;
-		this.currentSprite = 0;
-		// Position on the tileset
-		this.spriteX = 2;
-		this.spriteY = 12;
+		this.currentAnimationSprite = 0; // The current frame of current image, to know when we have to change it
+		this.currentDisplayedImage = 0; // The current displayed image (0 or 1)
+		switch(this.type) {
+		case ANIMAL_TYPE_TURTLE: 
+			this.spriteX = TURTLE_SPRITE_X;
+			this.spriteY = TURTLE_SPRITE_Y;
+			this.height = 2;
+			break;
+		case ANIMAL_TYPE_GOOMBA:
+			this.spriteX = GOOMBA_SPRITE_X;
+			this.spriteY = GOOMBA_SPRITE_Y;
+			this.height = 1;
+			break;
+		}
 	};
 	Animal.prototype.updatePosition = function() {
 		this.x += GOOMBA_VELOCITY_X * this.moveDirection;
@@ -323,13 +339,29 @@
 		for(var animalIndex in this.animalList) {
 			var animal = this.animalList[animalIndex];
 			context.save();
-			if(worldMap.currentDisplayedImage % 2) {
-				context.translate(Math.floor(worldMap.x) + animal.x,  worldMap.y + animal.y);
-				context.scale(-1, 1);
-			} else {
-				context.translate(Math.floor(worldMap.x) + animal.x - CELL_SIZE,  worldMap.y + animal.y);
+			switch(animal.type) {
+			case ANIMAL_TYPE_TURTLE: 
+				if(++animal.currentAnimationSprite > TURTLE_TICK_FRAME_NUMBER) {
+					animal.currentAnimationSprite = 0;
+					animal.currentDisplayedImage = ++animal.currentDisplayedImage % TURTLE_IMAGE_NUMBER;
+				}
+				if(animal.moveDirection === MOVE_RIGHT) {
+					context.translate(Math.floor(worldMap.x) + animal.x,  worldMap.y + animal.y - CELL_SIZE);
+					context.scale(-1, 1);
+				} else {
+					context.translate(Math.floor(worldMap.x) + animal.x - CELL_SIZE,  worldMap.y + animal.y - CELL_SIZE);
+				}
+				break;
+			case ANIMAL_TYPE_GOOMBA:
+				if(worldMap.currentDisplayedImage % 2 === 0) {
+					context.translate(Math.floor(worldMap.x) + animal.x,  worldMap.y + animal.y);
+					context.scale(-1, 1);
+				} else {
+					context.translate(Math.floor(worldMap.x) + animal.x - CELL_SIZE,  worldMap.y + animal.y);
+				}
+				break;
 			}
-			context.drawImage(game.tileSet, GOOMBA_SPRITE_X * CELL_SIZE, GOOMBA_SPRITE_Y * CELL_SIZE, CELL_SIZE, CELL_SIZE, 0, 0, CELL_SIZE, CELL_SIZE);
+			context.drawImage(game.tileSet, (animal.spriteX + animal.currentDisplayedImage) * CELL_SIZE, animal.spriteY * CELL_SIZE, CELL_SIZE, CELL_SIZE * animal.height, 0, 0, CELL_SIZE, CELL_SIZE * animal.height);
 			context.restore();
 		}
 		/*
@@ -344,7 +376,7 @@
 		context.fill();*/
 
 		context.beginPath();
-		var scoreText = $.text({ctx: context, x: 10, y: 10, text: "SCORE:", valign: 'top', halign: 'left', scale: 2, render: 1, vspacing: 10, hspacing: 2, snap: 0});
+		var scoreText = $.text({ctx: context, x: 10, y: 10, text: "SCORE: " + this.score, valign: 'top', halign: 'left', scale: 2, render: 1, vspacing: 10, hspacing: 2, snap: 0});
 		context.fillStyle = 'hsla(0, 100%, 100%, 1)';
 		context.fill();
 
@@ -370,11 +402,12 @@
 		peach.moveDirection = MOVE_STOP; // If Peach is moving, and its direction (-1 = left, 0 = stop, 1 = right)
 		peach.spriteDirection = MOVE_LEFT; // when movement is stopped, keeps the curret sprite direction
 		peach.hasBlockCollision = false;
-		
+
+		this.score = 0;
 		this.animalList = [];
 		// Inits animals
 		for(var index in animalList) {
-			this.animalList.push(new Animal(animalList[index].x, animalList[index].y));
+			this.animalList.push(new Animal(animalList[index].x, animalList[index].y, animalList[index].type));
 		}
 	}
 
@@ -385,7 +418,6 @@
 		this.tileSet.addEventListener('load', function() {
 			worldMap.create();
 		}.bind(this));
-
 		
 		this.reset();
 		
@@ -521,74 +553,74 @@
 
 	$.definitions.letters = {
 		'1': [
-			 [  , ,  1,  , 0 ],
-			 [  , 1, 1,  , 0 ],
-			 [  ,  , 1,  , 0 ],
-			 [  ,  , 1,  , 0 ],
-			 [ 1, 1, 1, 1, 1 ]
+			 [ ,  1, 0 ],
+			 [ 1, 1, 0 ],
+			 [  , 1, 0 ],
+			 [  , 1, 0 ],
+			 [ 1, 1, 1 ]
 			 ],
 		'2': [
-			 [ 1, 1, 1, 1, 0 ],
-			 [  ,  ,  ,  , 1 ],
-			 [  , 1, 1, 1, 0 ],
-			 [ 1,  ,  ,  , 0 ],
-			 [ 1, 1, 1, 1, 1 ]
+			 [  , 1, 1, 0 ],
+			 [ 1,  ,  , 1 ],
+			 [  ,  , 1, 0 ],
+			 [  , 1,  , 0 ],
+			 [ 1, 1, 1, 1 ]
 			 ],
 		'3': [
-			 [ 1, 1, 1, 1, 0 ],
-			 [  ,  ,  ,  , 1 ],
-			 [  , 1, 1, 1, 1 ],
-			 [  ,  ,  ,  , 1 ],
-			 [ 1, 1, 1, 1, 0 ]
+			 [ 1, 1, 1, 0 ],
+			 [  ,  ,  , 1 ],
+			 [  , 1, 1, 0 ],
+			 [  ,  ,  , 1 ],
+			 [ 1, 1, 1, 0 ]
 			 ],
 		'4': [
-			 [ 1,  ,  , 1, 0 ],
-			 [ 1,  ,  , 1, 0 ],
-			 [ 1, 1, 1, 1, 1 ],
-			 [  ,  ,  , 1, 0 ],
-			 [  ,  ,  , 1, 0 ]
+			 [  ,  , 1, 1 ],
+			 [  , 1,  , 1 ],
+			 [ 1,  ,  , 1 ],
+			 [ 1, 1, 1, 1 ],
+			 [  ,  ,  , 1 ]
 			 ],
 		'5': [
-			 [ 1, 1, 1, 1, 1 ],
-			 [ 1,  ,  ,  , 0 ],
-			 [ 1, 1, 1, 1, 0 ],
-			 [  ,  ,  ,  , 1 ],
-			 [ 1, 1, 1, 1, 0 ]
+			 [ 1, 1, 1, 1 ],
+			 [ 1,  ,  , 0 ],
+			 [ 1, 1, 1, 1 ],
+			 [  ,  ,  , 1 ],
+			 [ 1, 1, 1, 0 ]
 			 ],
 		'6': [
-			 [  , 1, 1, 1, 0 ],
-			 [ 1,  ,  ,  , 0 ],
-			 [ 1, 1, 1, 1, 0 ],
-			 [ 1,  ,  ,  , 1 ],
-			 [  , 1, 1, 1, 0 ]
+			 [  , 1, 1, 0 ],
+			 [ 1,  ,  , 0 ],
+			 [ 1, 1, 1, 0 ],
+			 [ 1,  ,  , 1 ],
+			 [  , 1, 1, 0 ]
 			 ],
 		'7': [
-			 [ 1, 1, 1, 1, 1 ],
-			 [  ,  ,  ,  , 1 ],
-			 [  ,  ,  , 1, 0 ],
-			 [  ,  , 1,  , 0 ],
-			 [  ,  , 1,  , 0 ]
+			 [ 1, 1, 1, 1 ],
+			 [  ,  ,  , 1 ],
+			 [  ,  , 1, 0 ],
+			 [  ,  , 1, 0 ],
+			 [  ,  , 1, 0 ]
 			 ],
 		'8': [
-			 [  , 1, 1, 1, 0 ],
-			 [ 1,  ,  ,  , 1 ],
-			 [  , 1, 1, 1, 0 ],
-			 [ 1,  ,  ,  , 1 ],
-			 [  , 1, 1, 1, 0 ]
+			 [  , 1, 1, 0 ],
+			 [ 1,  ,  , 1 ],
+			 [  , 1, 1, 0 ],
+			 [ 1,  ,  , 1 ],
+			 [  , 1, 1, 0 ]
 			 ],
 		'9': [
-			 [  , 1, 1, 1, 0 ],
-			 [ 1,  ,  ,  , 1 ],
-			 [  , 1, 1, 1, 1 ],
-			 [  ,  ,  ,  , 1 ],
-			 [  , 1, 1, 1, 0 ]
+			 [  , 1, 1, 0 ],
+			 [ 1,  ,  , 1 ],
+			 [  , 1, 1, 1 ],
+			 [  ,  ,  , 1 ],
+			 [  , 1, 1, 0 ]
 			 ],
 		'0': [
-			 [  , 1, 1, 1, 0 ],
-			 [ 1,  ,  ,  , 1 ],
-			 [ 1,  ,  ,  , 1 ],
-			 [ 1,  ,  ,  , 1 ],
-			 [  , 1, 1, 1, 0 ]
+			 [  , 1, 1, 0 ],
+			 [ 1,  ,  , 1 ],
+			 [ 1,  ,  , 1 ],
+			 [ 1,  ,  , 1 ],
+			 [  , 1, 1, 0 ]
 			 ],
 		'A': [
 			 [  , 1, 0 ],
