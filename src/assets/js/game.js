@@ -5,9 +5,11 @@
 	var MOVE_TICK_FRAME_NUMBER = 8; // When peach moves, she has 2 sprites to animate her. This defines the number of frame before switching sprite used
 	var WORLD_TICK_FRAME_NUMBER = 7; // The number of frame before switching wrld image to animate it
 	var WORLD_IMAGE_NUMBER = 4; // The number of world images to animated some elements
-	var CELL_SIZE = 32;
-	var PEACH_WIDTH = 32;
-	var PEACH_HEIGHT = 64;
+	var WORLD_LENGTH = 4; // The number of random block between start and end of the level
+	
+	var CELL_SIZE = 32; // Number of pixels of each cell/tile
+	var PEACH_WIDTH = CELL_SIZE;
+	var PEACH_HEIGHT = CELL_SIZE * 2;
 	var PEACH_VELOCITY_X = 3; // The number of pixels to move every frame
 	var PEACH_JUMP = 2;
 	
@@ -20,14 +22,15 @@
 	var MOVE_STOP = 0;
 	var MOVE_RIGHT = 1;
 	
-	var SCREEN_WIDTH = 16;
-	var SCREEN_HEIGHT = 10;
+	// Number of cells displayed on screen
+	var SCREEN_WIDTH = 20; 
+	var SCREEN_HEIGHT = 12;
 	
 	// Animal position on tileset
 	var GOOMBA_SPRITE_X = 2;
 	var GOOMBA_SPRITE_Y = 12;
 	var GOOMBA_VELOCITY_X = 1.5; // The number of pixels a animal moves every frame
-	var GOOMBA_TICK_FRAME_NUMBER = 8;
+	var GOOMBA_TICK_FRAME_NUMBER = 8; // Number of frame between each animation
 
 	var TURTLE_SPRITE_X = 0;
 	var TURTLE_SPRITE_Y = 12;
@@ -42,44 +45,179 @@
 
 	var isWorldMapReady = false;
 
-	// The wolrd map. Array on tiles par cell.
-	var worldMapDesign = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 9, 10, 11, 0, 12, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 9, 10, 11, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 33, 33, 13, 14, 15, 0, 16, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 12, 16, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 45, 0, 16, 0, 13, 14, 15, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 21, 10, 10, 19, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 19, 22, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 25, 26, 27, 0, 0, 0, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 25, 26, 26, 27, 0, 0, 0, 0, 13, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 16, 16, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 0, 0, 18, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 21, 10, 10, 11, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 33, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 14, 14, 15, 45, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 37, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 29, 30, 30, 30, 30, 30, 31, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 31, 24];
- 	var animalList =
+	// The world map. Array on tiles par cell.
+	var startBlock = {
+		"data":[9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 0, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 45, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27],
+		"height":10,
+		"width":14,
+		"animalList": [
+      	 	{x: 0, y: 5, type: ANIMAL_TYPE_TURTLE},
+    	 	{x: 0, y: -1, type: ANIMAL_TYPE_GOOMBA},
+    	]
+	};
+	var endBlock = {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 9, 10, 11, 0, 0, 0, 4, 0, 0, 0, 16, 0, 13, 14, 15, 0, 0, 0, 8, 0, 45, 0, 16, 0, 13, 14, 15, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 19, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15],
+         "height":10,
+         "width":12,
+	};
+	var blockList = 
 	[
-	 	//{x: 15, y: 5},
-	 	//{x: 51, y: 5},
-	 	{x: 90, y: 8, type: ANIMAL_TYPE_TURTLE}
-	];
+	 	{	//block-2
+		    "data":[0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 9, 10, 11, 0, 12, 0, 0, 13, 14, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 33, 33, 13, 14, 15, 0, 16, 0, 0, 13, 14, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 12, 16, 0, 0, 13, 21, 10, 10, 19, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 21, 19, 16, 16, 0, 0, 13, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 16, 16, 0, 0, 18, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 10, 11, 0, 0, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 14, 15, 45, 0, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 25, 26, 26, 26, 26, 26, 27, 0],
+		    "height":11,
+		    "width":27,
+			"animalList": [
+         	 	{x: 19, y: 9, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 1, y: 5, type: ANIMAL_TYPE_GOOMBA},
+	       	]
+	    },
+	    {
+	    	//block-3
+	         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 30, 30, 31, 0, 0, 0, 0, 0, 41, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 18, 0, 0, 41, 0, 41, 0, 0, 41, 0, 41, 0, 0, 41, 0, 41, 0, 0, 0, 9, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 0, 0, 0, 29, 30, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 29, 30, 31, 0, 0, 29, 30, 31, 0, 0, 29, 30, 31, 0, 0, 0, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 29, 30, 30, 31, 0, 0, 0, 0, 22, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 9, 11, 0, 0, 0, 0, 0, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 33, 33, 33, 33, 33, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 13, 15, 37, 37, 37, 37, 37],
+	         "height":10,
+	         "width":38,
+			 "animalList": [
+         	 	{x: 9, y: 5, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 24, y: 4, type: ANIMAL_TYPE_GOOMBA},
+	       	]
+        },
+        {	//block-4
+            "data":[0, 0, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 29, 30, 30, 31, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 10, 10, 10, 11, 0, 0, 9, 10, 11, 0, 0, 13, 14, 14, 15, 0, 0, 0, 41, 41, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 0, 41, 0, 0, 0, 0, 41, 0, 13, 14, 14, 14, 14, 14, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 14, 14, 14, 14, 14, 15, 33, 33, 13, 14, 15, 0, 0, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 14, 14, 14, 14, 14, 15, 37, 37, 13, 14, 15, 0, 9, 10, 10, 23, 15, 37, 37, 37, 37, 37, 37, 37, 37, 17, 10, 23, 14, 14, 21, 10, 19, 37, 37, 17, 23, 15, 0, 13, 14, 14, 15, 15, 37, 37, 37, 9, 11, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 15, 15, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 21, 19, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 13, 15, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 0],
+            "height":12,
+            "width":27,
+			 "animalList": [
+         	 	{x: 18, y: 5, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 7, y: -1, type: ANIMAL_TYPE_GOOMBA},
+	       	]
+        },
+        {	//block-5
+            "data":[0, 0, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 29, 30, 30, 31, 0, 29, 30, 30, 31, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 13, 14, 14, 15, 0, 0, 0, 41, 41, 0, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 0, 41, 0, 0, 0, 0, 41, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 0, 9, 10, 23, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 21, 11, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 17, 23, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 37, 37, 37, 37, 37, 17, 10, 19, 37, 37, 13, 21, 19, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 9, 11, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0],
+            "height":12,
+            "width":27,
+			"animalList": [
+	     	 	{x: 19, y: 8, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 7, y: -1, type: ANIMAL_TYPE_GOOMBA},
+	       	]
+       },
+       {	//block-6
+           "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 18, 0, 0, 41, 0, 0, 18, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 22, 0, 0, 0, 0, 0, 18, 0, 0, 13, 15, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 22, 0, 0, 18, 0, 0, 22, 0, 0, 18, 15, 0, 22, 33, 33, 18, 33, 33, 22, 33, 33, 18, 33, 33, 22, 33, 33, 22, 33, 33, 22, 33, 33, 22, 33, 33, 22, 15, 0, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 15, 0, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 25, 27, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 15],
+           "height":10,
+           "width":27,
+		   "animalList": [
+         	 	{x: 17, y: 2, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 12, y: 8, type: ANIMAL_TYPE_GOOMBA},
+	       	]
+      },
+      {	//block-7
+          "data":[0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 41, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 16, 0, 12, 0, 0, 0, 0, 0, 9, 10, 10, 23, 15, 0, 41, 0, 16, 0, 16, 0, 41, 0, 0, 0, 13, 14, 14, 15, 15, 0, 0, 0, 16, 0, 16, 41, 0, 41, 0, 0, 13, 14, 14, 15, 15, 10, 10, 10, 10, 11, 41, 0, 0, 0, 41, 0, 13, 14, 14, 15, 15, 14, 14, 14, 14, 15, 16, 0, 41, 12, 0, 0, 13, 14, 14, 21, 10, 10, 10, 23, 14, 15, 16, 0, 0, 16, 12, 0, 13, 14, 14, 13, 14, 14, 14, 21, 10, 10, 10, 11, 41, 16, 16, 0, 13, 14, 14, 13, 14, 14, 14, 13, 14, 14, 14, 15, 0, 16, 16, 0, 13, 14, 14, 13, 14, 14, 14, 13, 14, 14, 14, 15, 0, 16, 16, 0, 13, 21, 10, 10, 23, 14, 14, 13, 14, 14, 14, 15, 10, 10, 11, 0, 13, 13, 14, 14, 15, 14, 14, 13, 14, 14, 14, 15, 14, 14, 15, 0, 13, 13, 14, 14, 15, 14, 14, 13, 14, 14, 14, 15, 14, 14, 15, 0, 13, 13, 14, 14, 15, 14, 14, 13, 21, 10, 10, 10, 23, 14, 15, 0, 13, 13, 21, 10, 10, 23, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0],
+          "height":20,
+          "width":16,
+		   "animalList": [
+        	 	{x: 2, y: 14, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 1, y: -1, type: ANIMAL_TYPE_GOOMBA},
+	       	]
+     }
+    ]
+
 	// Specific tiles list
 	var PLATFORM_TILE_LIST = [9, 10, 11, 17, 19, 21, 23];
 	var BLOCK_TILE_LIST = [18, 22, 25, 26, 27, 29, 30, 31];
 	var ANIMATED_TILE_LIST = [33, 37, 41, 45];
 
-	var WOLRD_MAP_WIDTH = 100;
-	var WOLRD_MAP_HEIGHT = 10;
 	var TILE_PER_LINE = 4; // The number of tile per line on tile image
 	
 	/*
 	 * The world map
 	 */
 	var WorldMap = function() {
-		
 		// World is made of 2 images, to animate some elements (waterfalls...)
 		this.currentAnimationSprite = 0; // The current frame of current image, to know when we have to change it
 		this.currentDisplayedImage = 0; // The current displayed image (0 or 1)
 		this.imageList = []; // The world image list
 	};
+	
 	WorldMap.prototype.create = function() {
+		this.blockList = [endBlock];
+		for(var index = 0; index < WORLD_LENGTH; ++index) {
+			this.blockList.push(blockList[Math.floor(Math.random() * blockList.length)])
+		}
+		this.blockList.push(startBlock);//, startBlock];
+
+		this.width = 0;
+		this.height = 0;
+		this.cellList = [];
+		this.animalList = [];
+
+		for(var blockIndex in this.blockList) {
+			this.height = Math.max(this.blockList[blockIndex].height, this.height);
+		}
+		for(var blockIndex in this.blockList) {
+			var block = this.blockList[blockIndex];
+			var blockOffsetHeight = this.height - block.height; // If the block is less high than the highest bock
+			// Adds empty cells for less high blocks
+			for(var cellIndex = 0; cellIndex < blockOffsetHeight * block.width; ++cellIndex) {
+				if(typeof this.cellList[Math.floor(cellIndex / block.width)] === 'undefined') {
+					this.cellList[Math.floor(cellIndex / block.width)] = [];
+				}
+				this.cellList[Math.floor(cellIndex / block.width)].push(0);
+			}
+
+			for(var cellIndex in block.data) {
+				var cellLine = Math.floor(cellIndex / block.width) + blockOffsetHeight;
+				if(typeof this.cellList[cellLine] === 'undefined') {
+					this.cellList[cellLine] = [];
+				}
+				this.cellList[cellLine].push(block.data[cellIndex]);
+			}
+			
+			for(var animalIndex in block.animalList) {
+				var animal = block.animalList[animalIndex];
+				this.animalList.push(new Animal(animal.x + this.width + 1, animal.y - (block.height - SCREEN_HEIGHT), animal.type));
+			}
+
+		
+			this.width += block.width;
+		}
 		// Draws the first image
 		for(var imageNumber = 0; imageNumber < WORLD_IMAGE_NUMBER; ++imageNumber) {
 			// Clear canvas and draws the second image. The only difference is that we add an offset for alternative images (always just after on tile map)
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			this.imageList.push(this.generateImage(imageNumber));
 		}
+		this.offsetY = (SCREEN_HEIGHT - this.height);
 		isWorldMapReady = true;
 	};
+	WorldMap.prototype.generateImage = function(offset) {
+		// Inits world images. Creates a tmp canvas to draw full world images
+		var canvas = document.createElement("canvas");
+		canvas.width = this.width * CELL_SIZE;
+		canvas.height = this.height * CELL_SIZE;
+		var context = canvas.getContext("2d");
+
+		for(var y in this.cellList) {
+			for(var x in this.cellList[y]) {
+				var tile = this.cellList[y][x] - 1;
+				if(tile < 0) {
+					continue;
+				}
+				if(ANIMATED_TILE_LIST.indexOf(tile + 1) !== -1) {
+					tile += offset;
+				}
+				var tileX = tile % TILE_PER_LINE;
+				var tileY = Math.floor(tile / TILE_PER_LINE);
+				context.drawImage(game.tileSet, tileX * CELL_SIZE, tileY * CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE);
+			}
+		}
+		var image = new Image();
+		image.src = canvas.toDataURL();
+		return image;
+	};
 	WorldMap.prototype.getCellState = function(x, y) {
-		var cell = worldMapDesign[x + y * WOLRD_MAP_WIDTH];
+		if(x < 0 || y - this.offsetY < 0 || y - this.offsetY >= this.height || this.cellList[y - this.offsetY].length < x) {
+			return CELL_EMPTY;
+		}
+		var cell = this.cellList[y - this.offsetY][x];
+
 		if(PLATFORM_TILE_LIST.indexOf(cell) !== -1) {
 			return CELL_PLATFORM;
 		}
@@ -88,39 +226,14 @@
 		}
 		return CELL_EMPTY;
 	};
-	WorldMap.prototype.generateImage = function(offset) {
-		// Inits world images. Creates a tmp canvas to draw full world images
-		var canvas = document.createElement("canvas");
-		canvas.width = WOLRD_MAP_WIDTH * CELL_SIZE;
-		canvas.height = WOLRD_MAP_HEIGHT * CELL_SIZE;
-		var context = canvas.getContext("2d");
-
-		for(var cell in worldMapDesign) {
-			var x = cell % WOLRD_MAP_WIDTH;
-			var y = Math.floor(cell / WOLRD_MAP_WIDTH);
-			var tile = worldMapDesign[cell] - 1;
-			if(tile < 0) {
-				continue;
-			}
-			if(ANIMATED_TILE_LIST.indexOf(tile + 1) !== -1) {
-				tile += offset;
-			}
-			var tileX = tile % TILE_PER_LINE;
-			var tileY = Math.floor(tile / TILE_PER_LINE);
-			context.drawImage(game.tileSet, tileX * CELL_SIZE, tileY * CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE);
-		}
-
-		var image = new Image();
-		image.src = canvas.toDataURL();
-		return image;
-	};
 	WorldMap.prototype.updatePosition = function() {
 		if(!peach.hasBlockCollision) {
 			this.x -= 1.2 * peach.moveDirection * PEACH_VELOCITY_X;
 		}
-		this.y = peach.y < CENTER_Y_LIMIT ? CENTER_Y_LIMIT - peach.y : 0;
+		
+		this.y = this.offsetY * CELL_SIZE + (peach.y < CENTER_Y_LIMIT ? CENTER_Y_LIMIT - peach.y : 0);
 	};
-	
+
 	// Inits canvas
 	var canvas = document.getElementById('peach');
 	canvas.width = canvas.offsetWidth;
@@ -133,6 +246,7 @@
 		this.x = x * CELL_SIZE;
 		this.y = y * CELL_SIZE;
 		this.type = type;
+		this.isCollected = false;
 		this.moveDirection = MOVE_RIGHT;
 		this.currentAnimationSprite = 0; // The current frame of current image, to know when we have to change it
 		this.currentDisplayedImage = 0; // The current displayed image (0 or 1)
@@ -140,17 +254,19 @@
 		case ANIMAL_TYPE_TURTLE: 
 			this.spriteX = TURTLE_SPRITE_X;
 			this.spriteY = TURTLE_SPRITE_Y;
+			this.speed = TURTLE_VELOCITY_X;
 			this.height = 2;
 			break;
 		case ANIMAL_TYPE_GOOMBA:
 			this.spriteX = GOOMBA_SPRITE_X;
 			this.spriteY = GOOMBA_SPRITE_Y;
+			this.speed = GOOMBA_VELOCITY_X;
 			this.height = 1;
 			break;
 		}
 	};
 	Animal.prototype.updatePosition = function() {
-		this.x += GOOMBA_VELOCITY_X * this.moveDirection;
+		this.x += this.speed * this.moveDirection;
 		// Checks collision/fall state
 		if(this.moveDirection === MOVE_LEFT) {
 			// Checks left cells (peach is 2 cells high) While jumping, peach can be in contact with 3 cells. (floor, floor + 1, ceil + 1). When exactly on a ceil, floor = ceil
@@ -166,7 +282,12 @@
 				this.setOppositeDirection();
 			}
 		}
-		
+		var distanceToPeachX = this.x + worldMap.x - peach.x;
+		var distanceToPeachY = this.y + worldMap.y - peach.y - CELL_SIZE - worldMap.offsetY * CELL_SIZE;
+		if(distanceToPeachX > 0 && distanceToPeachX < CELL_SIZE && distanceToPeachY >= 0 && distanceToPeachY < CELL_SIZE) {
+			this.isCollected = true;
+			++game.score;
+		}
 	};
 	Animal.prototype.setOppositeDirection = function() {
 		this.moveDirection = this.moveDirection === MOVE_LEFT ?  MOVE_RIGHT : MOVE_LEFT;
@@ -251,7 +372,6 @@
 				this.currentSprite = ++this.currentSprite % 2;
 			}
 			this.hasBlockCollision = false;
-			
 			if(this.moveDirection === MOVE_LEFT) {
 				// Checks left cells (peach is 2 cells high) While jumping, peach can be in contact with 3 cells. (floor, floor + 1, ceil + 1). When exactly on a ceil, floor = ceil
 				var topLeftCellState = worldMap.getCellState(- Math.floor(cellX + .5 * PEACH_WIDTH / CELL_SIZE), cellY);
@@ -261,7 +381,7 @@
 					this.hasBlockCollision = true;
 				}
 			} else {
-				// Checks right cells (peach is 2 celles high)
+				// Checks right cells (peach is 2 cells high, we have to check 3 cells)
 				var topRightCellState = worldMap.getCellState(- Math.floor(cellX - .5 * PEACH_WIDTH / CELL_SIZE), cellY);
 				var rightCellState = worldMap.getCellState(- Math.floor(cellX - .5 * PEACH_WIDTH / CELL_SIZE), cellY + 1);
 				var bottomRightCellState = worldMap.getCellState(- Math.floor(cellX - .5 * PEACH_WIDTH / CELL_SIZE), Math.ceil((this.y) / CELL_SIZE) + 1);
@@ -277,7 +397,6 @@
 			this.currentVelocityY = Math.min(this.currentVelocityY + GRAVITY, 11);
 			this.y += this.currentVelocityY;
 		}
-		
 		// At the bottom of the game = death, resets game
 		if(this.y > SCREEN_HEIGHT * CELL_SIZE) {
 			game.reset();
@@ -285,10 +404,11 @@
 		}
 
 		// Checks Y collision/platform
-		if(this.currentVelocityY >= 0) { // If is not jumping top, checks the cell below
+		// TODO fix bug with modulo when y < 0
+		if(this.currentVelocityY > 0 || (this.currentVelocityY === 0 && this.moveDirection !== MOVE_STOP)) { // If is not jumping top, checks the cell below
 			var bottomCellState = worldMap.getCellState(- Math.floor(cellX), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
 			if(bottomCellState === CELL_PLATFORM || bottomCellState === CELL_BLOCK) {
-				if(this.currentVelocityY > 0 && this.y % CELL_SIZE < 12) {
+				if(this.currentVelocityY > 0 && this.y % CELL_SIZE <= 12) {
 					this.stopFall();
 					this.currentSprite = 0;
 					hasTouchFloor = true;
@@ -297,7 +417,7 @@
 			else {
 				this.startFall();
 			}
-		} else {
+		} else if(this.currentVelocity < 0 ){
 			// If is jumping top, checks if there is a block above. Checks a little before and after peach center (20%)
 			var topLeftCellState = worldMap.getCellState(- Math.floor(cellX + .2 * PEACH_WIDTH / CELL_SIZE), cellY);
 			var topRightCellState = worldMap.getCellState(- Math.floor(cellX - .2 * PEACH_WIDTH / CELL_SIZE), cellY);
@@ -319,25 +439,20 @@
 			return;
 
 		context.clearRect(0, 0, canvasWidth, canvasHeight);
-		
+		// Draws world
 		if(++worldMap.currentAnimationSprite > WORLD_TICK_FRAME_NUMBER) {
 			worldMap.currentAnimationSprite = 0;
 			worldMap.currentDisplayedImage = ++worldMap.currentDisplayedImage % WORLD_IMAGE_NUMBER;
 		}
 		var worldImage = worldMap.imageList[worldMap.currentDisplayedImage];
-
 		context.drawImage(worldImage, Math.floor(worldMap.x), worldMap.y);
-		context.save();
-		context.translate(peach.x, Math.max(CENTER_Y_LIMIT, peach.y));
-		if(peach.spriteDirection === MOVE_LEFT) {
-			context.scale(-1, 1);
-		}
 
-		context.drawImage(game.tileSet, peach.currentSprite * PEACH_WIDTH, 0, PEACH_WIDTH, PEACH_HEIGHT, -PEACH_WIDTH / 2, 0, PEACH_WIDTH, PEACH_HEIGHT);
-		context.restore();
-
-		for(var animalIndex in this.animalList) {
-			var animal = this.animalList[animalIndex];
+		// Draws animals
+		for(var animalIndex in worldMap.animalList) {
+			var animal = worldMap.animalList[animalIndex];
+			if(animal.isCollected) {
+				continue;
+			}
 			context.save();
 			switch(animal.type) {
 			case ANIMAL_TYPE_TURTLE: 
@@ -361,9 +476,19 @@
 				}
 				break;
 			}
+			context.translate(0, - worldMap.offsetY * CELL_SIZE);
 			context.drawImage(game.tileSet, (animal.spriteX + animal.currentDisplayedImage) * CELL_SIZE, animal.spriteY * CELL_SIZE, CELL_SIZE, CELL_SIZE * animal.height, 0, 0, CELL_SIZE, CELL_SIZE * animal.height);
 			context.restore();
 		}
+		
+		// Draws peach
+		context.save();
+		context.translate(peach.x, Math.max(CENTER_Y_LIMIT, peach.y));
+		if(peach.spriteDirection === MOVE_LEFT) {
+			context.scale(-1, 1);
+		}
+		context.drawImage(game.tileSet, peach.currentSprite * PEACH_WIDTH, 0, PEACH_WIDTH, PEACH_HEIGHT, -PEACH_WIDTH / 2, 0, PEACH_WIDTH, PEACH_HEIGHT);
+		context.restore();
 		/*
 		context.beginPath();
 		context.rect(0, 0, canvasWidth, canvasHeight);
@@ -371,15 +496,14 @@
 		context.fill();
 
 		context.beginPath();
-		var scoreText = $.text({ctx: context, x: canvasWidth / 2, y: 50, text: "PEACH IS BORED AND DECIDES TO FIND MARIO\n\nAS HER DRESS HAS NO POCKET\nSHE CANNOT COLLECT COINS,\n\nBUT AS A PRINCESS\nSHE CAN COLLECT THE ANIMALS SHE MEETS.", valign: 'top', halign: 'center', scale: 2, render: 1, vspacing: 10, hspacing: 2, snap: 0});
+		var scoreText = textManager.text({ctx: context, x: canvasWidth / 2, y: 50, text: "PEACH IS BORED AND DECIDES TO FIND MARIO\n\nAS HER DRESS HAS NO POCKET\nSHE CANNOT COLLECT COINS,\n\nBUT AS A PRINCESS\nSHE CAN COLLECT THE ANIMALS SHE MEETS.", valign: 'top', halign: 'center', scale: 2, render: 1, vspacing: 10, hspacing: 2, snap: 0});
 		context.fillStyle = 'hsla(0, 100%, 100%, 1)';
 		context.fill();*/
 
 		context.beginPath();
-		var scoreText = $.text({ctx: context, x: 10, y: 10, text: "SCORE: " + this.score, valign: 'top', halign: 'left', scale: 2, render: 1, vspacing: 10, hspacing: 2, snap: 0});
+		var scoreText = textManager.text({ctx: context, x: 10, y: 10, text: "SCORE: " + this.score, valign: 'top', halign: 'left', scale: 2, render: 1, vspacing: 10, hspacing: 2, snap: 0});
 		context.fillStyle = 'hsla(0, 100%, 100%, 1)';
 		context.fill();
-
 	}
 	
 	Game.prototype.updateBackgroundPosition = function() {
@@ -390,25 +514,20 @@
 	
 	Game.prototype.reset = function() {
 		// Initial position, far on right (peach starts on right side on go back to left, from negative x value to 0
-		worldMap.x = - (WOLRD_MAP_WIDTH - SCREEN_WIDTH) * CELL_SIZE;
+		worldMap.x = - (worldMap.width - SCREEN_WIDTH) * CELL_SIZE;
 
 		// Inits peach
 		peach.currentAnimationSprite = 0;
 		peach.currentSprite = 0;
 		// Start position
 		peach.x = CELL_SIZE * SCREEN_WIDTH / 2;
-		peach.y = CELL_SIZE * (SCREEN_HEIGHT - 3);
+		peach.y = CELL_SIZE * (SCREEN_HEIGHT - 5);
 		peach.currentVelocityY = 0;
 		peach.moveDirection = MOVE_STOP; // If Peach is moving, and its direction (-1 = left, 0 = stop, 1 = right)
 		peach.spriteDirection = MOVE_LEFT; // when movement is stopped, keeps the curret sprite direction
 		peach.hasBlockCollision = false;
 
 		this.score = 0;
-		this.animalList = [];
-		// Inits animals
-		for(var index in animalList) {
-			this.animalList.push(new Animal(animalList[index].x, animalList[index].y, animalList[index].type));
-		}
 	}
 
 	Game.prototype.start = function() {
@@ -417,27 +536,20 @@
 		this.tileSet.src = 'assets/img/tileset.png';
 		this.tileSet.addEventListener('load', function() {
 			worldMap.create();
+			this.reset();
+			this.loop();
 		}.bind(this));
-		
-		this.reset();
-		
-		var gameLoop = function () {
-			window.requestAnimationFrame(gameLoop.bind(this));
-			playFrameEvents();
-		};
-		
-		var playFrameEvents = function() {
-			peach.updatePosition();
-			worldMap.updatePosition();
-			for(var index in this.animalList) {
-				this.animalList[index].updatePosition();
+	}
+	Game.prototype.loop = function() {
+		window.requestAnimationFrame(this.loop.bind(this));
+		peach.updatePosition();
+		worldMap.updatePosition();
+		for(var index in worldMap.animalList) {
+			if(!worldMap.animalList[index].isCollected) {
+				worldMap.animalList[index].updatePosition();
 			}
-			this.updateBackgroundPosition();
-			this.draw();
-		}.bind(this);
-		
-		gameLoop();
-		
+		}
+		this.updateBackgroundPosition();
 		this.draw();
 	}
 
@@ -446,14 +558,14 @@
 	var game = new Game();
 	game.start();
 	
-	var $ = {};
-	$.definitions = {};
-	$.textLine = function( opt ) {
+	var textManager = {};
+	textManager.definitions = {};
+	textManager.textLine = function( opt ) {
 		var textLength = opt.text.length,
 			letterHeight = 5;
 		var letterX = 0;
 		for( var i = 0; i < textLength; ++i ) {
-			var letter = $.definitions.letters[ ( opt.text.charAt( i ) ) ] || $.definitions.letters[ 'unknown' ];
+			var letter = textManager.definitions.letters[ ( opt.text.charAt( i ) ) ] || textManager.definitions.letters[ 'unknown' ];
 			for( var y = 0; y < letterHeight; ++y ) {
 				for( var x = 0; x < letterHeight; ++x ) {
 					if( letter[ y ][ x ] === 1 ) {
@@ -461,11 +573,11 @@
 					}
 				}
 			}
-			letterX += letter[0].length
+			letterX += letter[0].length;
 		}
 	};
 
-	$.text = function( opt ) {
+	textManager.text = function( opt ) {
 		var size = 5,
 			letterSize = size * opt.scale,
 			lines = opt.text.split('\n'),
@@ -507,7 +619,7 @@
 					y = opt.y + ( letterSize + opt.vspacing ) * i;
 				
 				for( var letterNumber = 0; letterNumber < line.length; ++letterNumber ) {
-					var letter = $.definitions.letters[ ( line.charAt( letterNumber ) ) ] || $.definitions.letters[ 'unknown' ];
+					var letter = textManager.definitions.letters[ ( line.charAt( letterNumber ) ) ] || textManager.definitions.letters[ 'unknown' ];
 					lineWidth += letter[0].length * opt.scale;
 				}
 
@@ -528,7 +640,7 @@
 					y = Math.floor( y );
 				}
 
-				$.textLine( {
+				textManager.textLine( {
 					ctx: opt.ctx,
 					x: x,
 					y: y,
@@ -551,7 +663,7 @@
 		}
 	};
 
-	$.definitions.letters = {
+	textManager.definitions.letters = {
 		'1': [
 			 [ ,  1, 0 ],
 			 [ 1, 1, 0 ],

@@ -27,22 +27,34 @@ run index.html in generated www folder
 - level design
 - collisions with objects
 - added goombas and turtles (sprite, animation, movement, collision)
-
-### TODO:
-- game logo (if enough space)
-- pitch with game rules when starting the game
 - animals collection
 - scoring
-- timer
 - random level generation
 
+### CURRENT BUGS:
+- platform jump when peach.y < 0, modulo result is reversed, cause a jump gap on platform
+- animal collection doesn't work when camera has move.
+- collision with BLOCK tiles when falling should be on whole peach size, not just center like PLATFORMS. If too difficult, we can update
+
+### TODO:
+- introduction screen / pitch with game rules when starting the game (started but commented)
+- timer
+- add more block level design
+- random block cannot be repeated
+- add pipe tile, and when reaching Mario, he takes the pipe, then level is ended. (or game after 3 levels?)
+    - eventually Peach can follow him (add an event on down touch to make her fall when on the pipe)
+    - define if the game is over when a global timer is ended, life = 0 and/or a number of levels.
+    
 ### OPTIONAL TODO:
+- life number/game over
+- sound
+- several level designs (earth and ice) => done in psd, but image is too heavy after. We can try: http://www.storminthecastle.com/projects/colormatriximage/ to add color filter on map to add effect)
+- random sky color => set the sky image as a white to transparent gradient, and change background color (with time, random at level start...)
 - animals collected follow peach
 - online scoring with node
 - mobile touch
 - on borders of the world, move peach, not the camera (level design can avoid that)
-- sound
-- several level designs (earth and ice)
+- game logo (if enough space)
 
 ### PERF TODO:
-- set images as base64, not files
+- set images as base64, not files => as image is a png8, optimized after on tinypng.org, base64 is heavier, even zipped
