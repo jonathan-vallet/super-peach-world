@@ -47,7 +47,7 @@
 
 	// The world map. Array on tiles par cell.
 	var startBlock = {
-		"data":[9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 0, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 45, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27],
+		"data":[9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 18, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 22, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 22, 45, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27],
 		"height":10,
 		"width":14,
 		"animalList": [
@@ -137,11 +137,12 @@
 	};
 	
 	WorldMap.prototype.create = function() {
+		// Sets the blocks componing the world
 		this.blockList = [endBlock];
 		for(var index = 0; index < WORLD_LENGTH; ++index) {
 			this.blockList.push(blockList[Math.floor(Math.random() * blockList.length)])
 		}
-		this.blockList.push(startBlock);//, startBlock];
+		this.blockList.push(startBlock);
 
 		this.width = 0;
 		this.height = 0;
@@ -406,8 +407,10 @@
 		// Checks Y collision/platform
 		// TODO fix bug with modulo when y < 0
 		if(this.currentVelocityY > 0 || (this.currentVelocityY === 0 && this.moveDirection !== MOVE_STOP)) { // If is not jumping top, checks the cell below
+			var bottomLeftCellState = worldMap.getCellState(- Math.floor(cellX - .2 * PEACH_WIDTH / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
+			var bottomRightCellState = worldMap.getCellState(- Math.floor(cellX + .2 * PEACH_WIDTH / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
 			var bottomCellState = worldMap.getCellState(- Math.floor(cellX), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
-			if(bottomCellState === CELL_PLATFORM || bottomCellState === CELL_BLOCK) {
+			if(bottomCellState === CELL_PLATFORM || bottomLeftCellState === CELL_BLOCK || bottomRightCellState === CELL_BLOCK) {
 				if(this.currentVelocityY > 0 && this.y % CELL_SIZE <= 12) {
 					this.stopFall();
 					this.currentSprite = 0;

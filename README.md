@@ -34,7 +34,6 @@ run index.html in generated www folder
 ### CURRENT BUGS:
 - platform jump when peach.y < 0, modulo result is reversed, cause a jump gap on platform
 - animal collection doesn't work when camera has move.
-- collision with BLOCK tiles when falling should be on whole peach size, not just center like PLATFORMS. If too difficult, we can update
 
 ### TODO:
 - introduction screen / pitch with game rules when starting the game (started but commented)
