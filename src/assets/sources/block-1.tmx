@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="14" height="10" tilewidth="32" tileheight="32" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="14" height="11" tilewidth="32" tileheight="32" nextobjectid="1">
  <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32" tilecount="56">
   <image source="../img/tileset.png" width="128" height="448"/>
  </tileset>
- <layer name="Calque de Tile 1" width="14" height="10">
+ <layer name="Calque de Tile 1" width="14" height="11">
   <data>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="9"/>
    <tile gid="10"/>
    <tile gid="10"/>
@@ -129,7 +143,7 @@
    <tile gid="0"/>
    <tile gid="16"/>
    <tile gid="0"/>
-   <tile gid="45"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="25"/>
    <tile gid="26"/>

@@ -7,12 +7,14 @@
 	var WORLD_IMAGE_NUMBER = 4; // The number of world images to animated some elements
 	var WORLD_LENGTH = 4; // The number of random block between start and end of the level
 	
+	var START_TEXT_TICK_FRAME_NUMBER = 15; // The number of frame before switching wrld image to animate it
+	
 	var CELL_SIZE = 32; // Number of pixels of each cell/tile
 	var PEACH_WIDTH = CELL_SIZE;
 	var PEACH_HEIGHT = CELL_SIZE * 2;
 	var PEACH_VELOCITY_X = 3; // The number of pixels to move every frame
 	var PEACH_JUMP = 2;
-	
+	var JUMP_IMPULSE = 12;
 	// Animal type list (specific sprites and animation)
 	var ANIMAL_TYPE_GOOMBA = 1;
 	var ANIMAL_TYPE_TURTLE = 2;
@@ -47,12 +49,12 @@
 
 	// The world map. Array on tiles par cell.
 	var startBlock = {
-		"data":[9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 18, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 22, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 22, 45, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27],
-		"height":10,
+		"data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 10, 10, 10, 11, 0, 12, 41, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 0, 0, 0, 0, 0, 0, 13, 14, 14, 14, 14, 15, 0, 16, 41, 0, 12, 0, 0, 0, 17, 10, 10, 10, 10, 10, 11, 16, 0, 0, 16, 0, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 0, 0, 13, 14, 14, 14, 14, 14, 15, 16, 0, 0, 16, 0, 0, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27],
+		"height":11,
 		"width":14,
 		"animalList": [
-      	 	{x: 0, y: 5, type: ANIMAL_TYPE_TURTLE},
-    	 	{x: 0, y: -1, type: ANIMAL_TYPE_GOOMBA},
+      	 	{x: 0, y: 6, type: ANIMAL_TYPE_TURTLE},
+    	 	{x: 0, y: 0, type: ANIMAL_TYPE_GOOMBA},
     	]
 	};
 	var endBlock = {
@@ -91,7 +93,7 @@
 	       	]
         },
         {	//block-5
-            "data":[0, 0, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 29, 30, 30, 31, 0, 29, 30, 30, 31, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 13, 14, 14, 15, 0, 0, 0, 41, 41, 0, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 0, 41, 0, 0, 0, 0, 41, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 0, 9, 10, 23, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 21, 11, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 17, 23, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 37, 37, 37, 37, 37, 17, 10, 19, 37, 37, 13, 21, 19, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 9, 11, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0],
+            "data":[0, 0, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 0, 9, 10, 23, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 21, 11, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 17, 23, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 37, 37, 37, 37, 37, 17, 10, 19, 37, 37, 13, 21, 19, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 9, 11, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0],
             "height":12,
             "width":27,
 			"animalList": [
@@ -100,23 +102,41 @@
 	       	]
        },
        {	//block-6
-           "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 18, 0, 0, 41, 0, 0, 18, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 22, 0, 0, 0, 0, 0, 18, 0, 0, 13, 15, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 22, 0, 0, 18, 0, 0, 22, 0, 0, 18, 15, 0, 22, 33, 33, 18, 33, 33, 22, 33, 33, 18, 33, 33, 22, 33, 33, 22, 33, 33, 22, 33, 33, 22, 33, 33, 22, 15, 0, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 15, 0, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 25, 27, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 15],
+           "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 18, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 22, 0, 0, 0, 0, 0, 18, 0, 0, 13, 15, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 22, 0, 0, 22, 0, 0, 18, 0, 0, 22, 0, 0, 18, 15, 0, 22, 33, 33, 18, 33, 33, 22, 33, 33, 18, 33, 33, 22, 33, 33, 22, 33, 33, 22, 33, 33, 22, 33, 33, 22, 15, 0, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 15, 0, 22, 25, 27, 22, 37, 37, 22, 37, 37, 22, 25, 27, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 37, 37, 22, 15, 0],
            "height":10,
            "width":27,
 		   "animalList": [
-         	 	{x: 17, y: 2, type: ANIMAL_TYPE_TURTLE},
-	       	 	{x: 12, y: 8, type: ANIMAL_TYPE_GOOMBA},
+         	 	{x: 1, y: 8, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 11, y: 8, type: ANIMAL_TYPE_GOOMBA},
 	       	]
       },
       {	//block-7
-          "data":[0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 41, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 16, 0, 12, 0, 0, 0, 0, 0, 9, 10, 10, 23, 15, 0, 41, 0, 16, 0, 16, 0, 41, 0, 0, 0, 13, 14, 14, 15, 15, 0, 0, 0, 16, 0, 16, 41, 0, 41, 0, 0, 13, 14, 14, 15, 15, 10, 10, 10, 10, 11, 41, 0, 0, 0, 41, 0, 13, 14, 14, 15, 15, 14, 14, 14, 14, 15, 16, 0, 41, 12, 0, 0, 13, 14, 14, 21, 10, 10, 10, 23, 14, 15, 16, 0, 0, 16, 12, 0, 13, 14, 14, 13, 14, 14, 14, 21, 10, 10, 10, 11, 41, 16, 16, 0, 13, 14, 14, 13, 14, 14, 14, 13, 14, 14, 14, 15, 0, 16, 16, 0, 13, 14, 14, 13, 14, 14, 14, 13, 14, 14, 14, 15, 0, 16, 16, 0, 13, 21, 10, 10, 23, 14, 14, 13, 14, 14, 14, 15, 10, 10, 11, 0, 13, 13, 14, 14, 15, 14, 14, 13, 14, 14, 14, 15, 14, 14, 15, 0, 13, 13, 14, 14, 15, 14, 14, 13, 14, 14, 14, 15, 14, 14, 15, 0, 13, 13, 14, 14, 15, 14, 14, 13, 21, 10, 10, 10, 23, 14, 15, 0, 13, 13, 21, 10, 10, 23, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0],
+          "data":[0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 41, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 0, 0, 16, 0, 12, 0, 0, 0, 0, 0, 9, 10, 10, 23, 15, 0, 41, 0, 16, 0, 16, 0, 41, 0, 0, 0, 13, 14, 14, 15, 15, 0, 0, 0, 16, 0, 16, 41, 0, 41, 0, 0, 13, 14, 14, 15, 15, 9, 10, 10, 10, 11, 41, 0, 0, 0, 41, 0, 13, 14, 14, 15, 15, 13, 14, 14, 14, 15, 16, 0, 41, 12, 0, 0, 13, 14, 14, 21, 10, 10, 10, 23, 14, 15, 16, 0, 0, 16, 12, 0, 13, 14, 14, 13, 14, 14, 14, 21, 10, 10, 10, 11, 41, 16, 16, 0, 13, 14, 14, 13, 14, 14, 14, 13, 14, 14, 14, 15, 0, 16, 16, 0, 13, 14, 14, 13, 14, 14, 14, 13, 14, 14, 14, 15, 0, 16, 16, 0, 13, 21, 10, 10, 23, 14, 14, 13, 14, 14, 14, 15, 9, 10, 11, 0, 13, 13, 14, 14, 15, 14, 14, 13, 14, 14, 14, 15, 13, 14, 15, 0, 13, 13, 14, 14, 15, 14, 14, 13, 14, 14, 14, 15, 13, 14, 15, 0, 13, 13, 14, 14, 15, 14, 14, 13, 21, 10, 10, 10, 23, 14, 15, 0, 13, 13, 21, 10, 10, 23, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0, 13, 13, 13, 14, 14, 15, 14, 13, 13, 14, 14, 14, 15, 14, 15, 0],
           "height":20,
           "width":16,
 		   "animalList": [
         	 	{x: 2, y: 14, type: ANIMAL_TYPE_TURTLE},
 	       	 	{x: 1, y: -1, type: ANIMAL_TYPE_GOOMBA},
 	       	]
-     }
+     },
+     {	//block-8
+         "data":[0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 33, 33, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 37, 37, 15, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 13, 37, 37, 15, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 13, 37, 37, 15, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 13, 37, 37, 21, 10, 11, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 21, 10, 11, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 21, 10, 10, 23, 13, 37, 37, 13, 14, 15, 0, 9, 10, 11, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 21, 10, 10, 23, 37, 37, 13, 14, 15, 0, 13, 33, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 29, 30, 30, 30, 31, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 18, 14, 13, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 22, 14, 13, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 22, 14, 13, 37, 15, 0],
+         "height":20,
+         "width":16,
+		   "animalList": [
+                {x: 2, y: 14, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 7, y: -1, type: ANIMAL_TYPE_GOOMBA},
+	       	]
+    },
+    {	//block-9
+        "data":[0, 0, 0, 0, 9, 11, 29, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 9, 11, 0, 0, 0, 0, 0, 0, 13, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 0, 0, 0, 0, 13, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 0, 0, 9, 10, 11, 15, 37, 37, 37, 37, 37, 37, 37, 29, 30, 31, 13, 15, 0, 0, 0, 0, 13, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 9, 10, 23, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 29, 30, 30, 31, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 29, 30, 31, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 9, 10, 11, 0, 13, 21, 10, 23, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 29, 30, 31, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 18, 37, 37, 37, 37, 29, 30, 31, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 22, 37, 37, 37, 37, 37, 18, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 22, 37, 37, 37, 37, 37, 22, 37, 13, 14, 15, 0],
+        "height":19,
+        "width":20,
+		   "animalList": [
+                {x: 9, y: 7, type: ANIMAL_TYPE_TURTLE},
+	       	 	{x: 7, y: -1, type: ANIMAL_TYPE_GOOMBA},
+	       	]
+   }
     ]
 
 	// Specific tiles list
@@ -138,11 +158,13 @@
 	
 	WorldMap.prototype.create = function() {
 		// Sets the blocks componing the world
-		this.blockList = [endBlock];
-		for(var index = 0; index < WORLD_LENGTH; ++index) {
-			this.blockList.push(blockList[Math.floor(Math.random() * blockList.length)])
+		function shuffle(o){
+		    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+		    return o;
 		}
+		this.blockList = shuffle(blockList);
 		this.blockList.push(startBlock);
+		this.blockList.unshift(endBlock);
 
 		this.width = 0;
 		this.height = 0;
@@ -231,7 +253,6 @@
 		if(!peach.hasBlockCollision) {
 			this.x -= 1.2 * peach.moveDirection * PEACH_VELOCITY_X;
 		}
-		
 		this.y = this.offsetY * CELL_SIZE + (peach.y < CENTER_Y_LIMIT ? CENTER_Y_LIMIT - peach.y : 0);
 	};
 
@@ -284,8 +305,8 @@
 			}
 		}
 		var distanceToPeachX = this.x + worldMap.x - peach.x;
-		var distanceToPeachY = this.y + worldMap.y - peach.y - CELL_SIZE - worldMap.offsetY * CELL_SIZE;
-		if(distanceToPeachX > 0 && distanceToPeachX < CELL_SIZE && distanceToPeachY >= 0 && distanceToPeachY < CELL_SIZE) {
+		var distanceToPeachY = this.y - peach.y;
+		if(distanceToPeachX > 0 && distanceToPeachX < CELL_SIZE && distanceToPeachY >= -CELL_SIZE && distanceToPeachY <= CELL_SIZE) {
 			this.isCollected = true;
 			++game.score;
 		}
@@ -297,23 +318,44 @@
 	function Peach() {
 		// Inits Peach
 		this.isJumping = false;
+		this.goLeft = false;
+		this.goRight = false;
 		window.addEventListener('keydown', function(k) {
+			if(game.displayStartScreen && k.keyCode === 32) { // Space
+				game.displayStartScreen = false;
+				return;
+			}
 		    switch(k.keyCode) {
-		        case 32: //up
-		        case 38: //space
+	        	case 32: //space
+		        case 38: //up
+		        case 87: //W
 		        	// Player has to release and press again to make a new jump
+		        	if(game.displayStartScreen) {
+	        			return;
+		        	}
 		        	if(!this.isJumping) {
 			        	this.startJump();
 		        	}
 		            break;
+		        case 65: //A
 		        case 37: //left
-		        	this.moveDirection = MOVE_LEFT;
+		        	if(game.displayStartScreen) {
+        				return;
+		        	}
+		        	this.goLeft = true;
+		        	this.goRight = false;
 		        	this.spriteDirection = MOVE_LEFT;
 		            break;
 		        case 39: //right
-		        	this.moveDirection = MOVE_RIGHT;
+		        case 68: //D
+		        	if(game.displayStartScreen) {
+        				return;
+		        	}
+		        	this.goLeft = false;
+		        	this.goRight = true;
 		        	this.spriteDirection = MOVE_RIGHT;
 		            break;
+	            //83:S bottom: 40
 		    }
 		}.bind(this));
 
@@ -324,18 +366,21 @@
 		        	this.isJumping = false;
 		        	this.stopJump();
 		            break;
+		        case 65: //A
 		        case 37: //left
+		        	this.goLeft = false;
+	        		break;
 		        case 39: //right
-		        	this.moveDirection = MOVE_STOP;
-		        	this.currentSprite = 0; // Resets move animation
+		        case 68: //D
+		        	this.goRight = false;
 		            break;
 		    }
 		}.bind(this));
 	};
-	
+
 	Peach.prototype.startJump = function() {
 		if(this.isOnGround) {
-			this.currentVelocityY = -12;
+			this.currentVelocityY = -JUMP_IMPULSE;
 			this.isOnGround = false;
 			this.isJumping = true;
 		}
@@ -366,6 +411,15 @@
 		var cellX = (worldMap.x - canvas.width / 2 + PEACH_WIDTH) / CELL_SIZE;
 		var cellY = Math.floor((this.y) / CELL_SIZE);	
 
+		if(this.goLeft) {
+			this.moveDirection = MOVE_LEFT;
+		} else if (this.goRight) {
+			this.moveDirection = MOVE_RIGHT;
+		} else {
+			this.moveDirection = MOVE_STOP;
+        	this.currentSprite = 0; // Resets move animation
+		}
+    	
 		// Updates X position
 		if(this.moveDirection !== MOVE_STOP) {
 			if(++this.currentAnimationSprite > MOVE_TICK_FRAME_NUMBER) {
@@ -405,13 +459,15 @@
 		}
 
 		// Checks Y collision/platform
-		// TODO fix bug with modulo when y < 0
 		if(this.currentVelocityY > 0 || (this.currentVelocityY === 0 && this.moveDirection !== MOVE_STOP)) { // If is not jumping top, checks the cell below
-			var bottomLeftCellState = worldMap.getCellState(- Math.floor(cellX - .2 * PEACH_WIDTH / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
-			var bottomRightCellState = worldMap.getCellState(- Math.floor(cellX + .2 * PEACH_WIDTH / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
+			var bottomLeftCellState = worldMap.getCellState(- Math.floor(cellX + .4 * PEACH_WIDTH / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
+			var bottomRightCellState = worldMap.getCellState(- Math.floor(cellX - .4 * PEACH_WIDTH / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
 			var bottomCellState = worldMap.getCellState(- Math.floor(cellX), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
+			console.log(bottomCellState)
 			if(bottomCellState === CELL_PLATFORM || bottomLeftCellState === CELL_BLOCK || bottomRightCellState === CELL_BLOCK) {
-				if(this.currentVelocityY > 0 && this.y % CELL_SIZE <= 12) {
+				console.log(this.currentVelocityY, this.y, this.y % CELL_SIZE);
+				if(this.currentVelocityY > 0 && ((this.y >= 0 && this.y % CELL_SIZE <= JUMP_IMPULSE) || (this.y < 0 && this.y % CELL_SIZE <= - JUMP_IMPULSE))) {
+					console.log('stop fall!');
 					this.stopFall();
 					this.currentSprite = 0;
 					hasTouchFloor = true;
@@ -420,7 +476,7 @@
 			else {
 				this.startFall();
 			}
-		} else if(this.currentVelocity < 0 ){
+		} else if(this.currentVelocityY < 0 ) {
 			// If is jumping top, checks if there is a block above. Checks a little before and after peach center (20%)
 			var topLeftCellState = worldMap.getCellState(- Math.floor(cellX + .2 * PEACH_WIDTH / CELL_SIZE), cellY);
 			var topRightCellState = worldMap.getCellState(- Math.floor(cellX - .2 * PEACH_WIDTH / CELL_SIZE), cellY);
@@ -483,7 +539,7 @@
 			context.drawImage(game.tileSet, (animal.spriteX + animal.currentDisplayedImage) * CELL_SIZE, animal.spriteY * CELL_SIZE, CELL_SIZE, CELL_SIZE * animal.height, 0, 0, CELL_SIZE, CELL_SIZE * animal.height);
 			context.restore();
 		}
-		
+
 		// Draws peach
 		context.save();
 		context.translate(peach.x, Math.max(CENTER_Y_LIMIT, peach.y));
@@ -492,21 +548,29 @@
 		}
 		context.drawImage(game.tileSet, peach.currentSprite * PEACH_WIDTH, 0, PEACH_WIDTH, PEACH_HEIGHT, -PEACH_WIDTH / 2, 0, PEACH_WIDTH, PEACH_HEIGHT);
 		context.restore();
-		/*
-		context.beginPath();
-		context.rect(0, 0, canvasWidth, canvasHeight);
-		context.fillStyle = 'rgba(0, 0, 0, 0.5)';
-		context.fill();
 
-		context.beginPath();
-		var scoreText = textManager.text({ctx: context, x: canvasWidth / 2, y: 50, text: "PEACH IS BORED AND DECIDES TO FIND MARIO\n\nAS HER DRESS HAS NO POCKET\nSHE CANNOT COLLECT COINS,\n\nBUT AS A PRINCESS\nSHE CAN COLLECT THE ANIMALS SHE MEETS.", valign: 'top', halign: 'center', scale: 2, render: 1, vspacing: 10, hspacing: 2, snap: 0});
-		context.fillStyle = 'hsla(0, 100%, 100%, 1)';
-		context.fill();*/
+		textManager.text({ctx: context, x: 10, y: 10, text: "SCORE: " + this.score, valign: 'top', halign: 'left', scale: 2, vspacing: 10, hspacing: 2, color: 'rgba(255,255,255)'});
 
-		context.beginPath();
-		var scoreText = textManager.text({ctx: context, x: 10, y: 10, text: "SCORE: " + this.score, valign: 'top', halign: 'left', scale: 2, render: 1, vspacing: 10, hspacing: 2, snap: 0});
-		context.fillStyle = 'hsla(0, 100%, 100%, 1)';
-		context.fill();
+		if(this.displayStartScreen) {
+			context.beginPath();
+			context.rect(0, 0, canvasWidth, canvasHeight);
+			context.fillStyle = 'rgba(0, 0, 0, 0.8)';
+			context.fill();
+			
+			textManager.text({ctx: context, x: 210, y: 30, text: "SUPER", valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(0, 20, 222)'});
+			textManager.text({ctx: context, x: 210, y: 65, text: "PEACH", valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(29, 135, 0)'});
+			textManager.text({ctx: context, x: 320, y: 65, text: "WORLD", valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(228, 0, 10)'});
+			textManager.text({ctx: context, x: canvasWidth / 2, y: 120, text: "PEACH IS BORED AND DECIDES TO FIND MARIO.\nAS HER DRESS HAS NO POCKET SHE CANNOT COLLECT COINS!\nBUT AS A PRINCESS SHE CAN COLLECT THE ANIMALS SHE MEETS.", valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(255, 255,255)'});
+			textManager.text({ctx: context, x: canvasWidth / 2, y: 220, text: "FIND MARIO WHILE COLLECTING GOOMBAS AND TURTLES.", valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(255, 196,0)'});
+			textManager.text({ctx: context, x: canvasWidth / 2, y: 250, text: "PRESS SPACE TO START", valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(29, 135, 0)'});
+
+			textManager.text({ctx: context, x: 20, y: 330, text: "MOVE: ARROWS/WASD\nJUMP: SPACE/UP", valign: 'top', halign: 'left', scale: 2, vspacing: 12, hspacing: 2, color: 'rgba(255, 255,255, 0.7)'});
+
+//			if(++worldMap.currentAnimationSprite > START_TEXT_TICK_FRAME_NUMBER) {
+//				worldMap.currentAnimationSprite = 0;
+//				worldMap.currentDisplayedImage = ++worldMap.currentDisplayedImage % WORLD_IMAGE_NUMBER;
+//			}
+		}
 	}
 	
 	Game.prototype.updateBackgroundPosition = function() {
@@ -524,7 +588,7 @@
 		peach.currentSprite = 0;
 		// Start position
 		peach.x = CELL_SIZE * SCREEN_WIDTH / 2;
-		peach.y = CELL_SIZE * (SCREEN_HEIGHT - 5);
+		peach.y = CELL_SIZE * (SCREEN_HEIGHT - 3);
 		peach.currentVelocityY = 0;
 		peach.moveDirection = MOVE_STOP; // If Peach is moving, and its direction (-1 = left, 0 = stop, 1 = right)
 		peach.spriteDirection = MOVE_LEFT; // when movement is stopped, keeps the curret sprite direction
@@ -535,6 +599,7 @@
 
 	Game.prototype.start = function() {
 		// Loads assets
+		this.displayStartScreen = true;
 		this.tileSet = new Image();
 		this.tileSet.src = 'assets/img/tileset.png';
 		this.tileSet.addEventListener('load', function() {
@@ -581,6 +646,7 @@
 	};
 
 	textManager.text = function( opt ) {
+		context.beginPath();
 		var size = 5,
 			letterSize = size * opt.scale,
 			lines = opt.text.split('\n'),
@@ -614,56 +680,42 @@
 		var	cx = sx + textWidth / 2,
 			cy = sy + textHeight / 2;
 
-		if( opt.render ) {
-			for( var i = 0; i < lineCount; ++i ) {
-				var line = lines[ i ],			
-					lineWidth = (line.length - 1) * opt.hspacing,
-					x = opt.x,
-					y = opt.y + ( letterSize + opt.vspacing ) * i;
-				
-				for( var letterNumber = 0; letterNumber < line.length; ++letterNumber ) {
-					var letter = textManager.definitions.letters[ ( line.charAt( letterNumber ) ) ] || textManager.definitions.letters[ 'unknown' ];
-					lineWidth += letter[0].length * opt.scale;
-				}
-
-				if( opt.halign == 'center' ) {
-					x = opt.x - lineWidth / 2;
-				} else if( opt.halign == 'right' ) {
-					x = opt.x - lineWidth;
-				}
-
-				if( opt.valign == 'center' ) {
-					y = y - textHeight / 2;
-				} else if( opt.valign == 'bottom' ) {
-					y = y - textHeight;
-				}
-
-				if( opt.snap ) {
-					x = Math.floor( x );
-					y = Math.floor( y );
-				}
-
-				textManager.textLine( {
-					ctx: opt.ctx,
-					x: x,
-					y: y,
-					text: line,
-					hspacing: opt.hspacing,
-					scale: opt.scale
-				} );
+		for( var i = 0; i < lineCount; ++i ) {
+			var line = lines[ i ],			
+				lineWidth = (line.length - 1) * opt.hspacing,
+				x = opt.x,
+				y = opt.y + ( letterSize + opt.vspacing ) * i;
+			
+			for( var letterNumber = 0; letterNumber < line.length; ++letterNumber ) {
+				var letter = textManager.definitions.letters[ ( line.charAt( letterNumber ) ) ] || textManager.definitions.letters[ 'unknown' ];
+				lineWidth += letter[0].length * opt.scale;
 			}
-		}
 
-		return {
-			sx: sx,
-			sy: sy,
-			cx: cx,
-			cy: cy,
-			ex: ex,
-			ey: ey,
-			width: textWidth,
-			height: textHeight
+			if( opt.halign == 'center' ) {
+				x = opt.x - lineWidth / 2;
+			} else if( opt.halign == 'right' ) {
+				x = opt.x - lineWidth;
+			}
+
+			if( opt.valign == 'center' ) {
+				y = y - textHeight / 2;
+			} else if( opt.valign == 'bottom' ) {
+				y = y - textHeight;
+			}
+
+			textManager.textLine( {
+				ctx: opt.ctx,
+				x: x,
+				y: y,
+				text: line,
+				hspacing: opt.hspacing,
+				scale: opt.scale
+			} );
 		}
+		
+		context.fillStyle = opt.color;
+		context.fill();
+
 	};
 
 	textManager.definitions.letters = {
@@ -738,11 +790,11 @@
 			 [  , 1, 1, 0 ]
 			 ],
 		'A': [
-			 [  , 1, 0 ],
-			 [ 1,  , 1 ],
-			 [ 1, 1, 1 ],
-			 [ 1,  , 1 ],
-			 [ 1,  , 1 ]
+			 [  , 1, 1, 0 ],
+			 [ 1,  ,  , 1 ],
+			 [ 1, 1, 1, 1 ],
+			 [ 1,  ,  , 1 ],
+			 [ 1,  ,  , 1 ]
 			 ],
 		'B': [
 			 [ 1, 1, 0 ],
@@ -877,12 +929,12 @@
 			 [  , 1, 0 ],
 			 [  , 1, 0 ]
 			 ],
-		'U': [
-			 [ 1,  , 1 ],
-			 [ 1,  , 1 ],
-			 [ 1,  , 1 ],
-			 [ 1,  , 1 ],
-			 [  , 1, 0 ]
+		'U': [        
+			 [ 1,  ,  , 1 ],
+			 [ 1,  ,  , 1 ],
+			 [ 1,  ,  , 1 ],
+			 [ 1,  ,  , 1 ],
+			 [  , 1, 1, 0 ]
 			 ],
 		'V': [
 			 [ 1,  ,  ,  , 1 ],
@@ -940,12 +992,12 @@
 			 [   ,  , 0 ],
 			 [  1,  , 0 ]
 			 ],
-		 '+': [
-			 [  ,  ,  ,  , 0 ],
-			 [  ,  , 1,  , 0 ],
-			 [  , 1, 1, 1, 0 ],
-			 [  ,  , 1,  , 0 ],
-			 [  ,  ,  ,  , 0 ]
+		'!': [
+			 [  1,  , 0 ],
+			 [  1,  , 0 ],
+			 [  1,  , 0 ],
+			 [   ,  , 0 ],
+			 [  1,  , 0 ]
 			 ],
 		'/': [
 			 [  ,  ,  ,  , 1 ],
@@ -961,13 +1013,6 @@
 			 [  , 1, 0 ],
 			 [  ,  , 0 ]
 			 ],
-		'@': [
-			 [  1, 1, 1, 1, 1 ],
-			 [   ,  ,  ,  , 1 ],
-			 [  1, 1, 1,  , 1 ],
-			 [  1,  , 1,  , 1 ],
-			 [  1, 1, 1, 1, 1 ]
-			 ]
 	};
 	
 }(window, document));
