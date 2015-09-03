@@ -18,11 +18,11 @@ run index.html in generated www folder
 
 ## Project details
 
-## Compatibility
+### Compatibility
 
 Developped on Chrome, but tested on IE11 and Firefox as well
 
-## Features
+### Features
 
 World is randomly generated. Many blocks have been designed with Tiled and are put together randomly.
 Each block has 1 turtle and 1 goomba to collect.
