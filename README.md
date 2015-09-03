@@ -25,7 +25,11 @@ Developped on Chrome, but tested on IE11 and Firefox as well
 ### Features
 
 World is randomly generated. Many blocks have been designed with Tiled and are put together randomly.
+
 Each block has 1 turtle and 1 goomba to collect.
+
 2 world designs have been done: forest and desert. An ice design is done in peach.psd source file, but image was too heavy for the contest limitation.
+
 Due to holiday I cannot do the fine tuning, like saving score/best score.
+
 When game is ended it restarts and launch another requestanimationframe loop. I know it's not quite performant, but I found the idea of the 2x speed funny, so I let it, like harder mode on Super Mario bros 1 on game boy once finished :). And after all, don't we say: it's not a bug, it's a feature!
