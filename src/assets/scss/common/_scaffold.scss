@@ -4,7 +4,13 @@ html, body, #peach {
     height: 100%;
     position: relative;
 }
-
+body {
+    background: #90c8e0;
+}
+#game {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
 .el {
     position: absolute;
     top: 50%;

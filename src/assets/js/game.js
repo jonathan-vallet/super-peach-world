@@ -9,7 +9,8 @@
 	
 	var START_TEXT_TICK_FRAME_NUMBER = 15; // The number of frame before switching wrld image to animate it
 	
-	var CELL_SIZE = 32; // Number of pixels of each cell/tile
+	var CELL_SIZE = 32; // Number of pixels of each cell
+	var TILE_SIZE = 16; // Number of pixels of each tile
 	var PEACH_WIDTH = CELL_SIZE;
 	var PEACH_HEIGHT = CELL_SIZE * 2;
 	var PEACH_VELOCITY_X = 3; // The number of pixels to move every frame
@@ -18,6 +19,7 @@
 	// Animal type list (specific sprites and animation)
 	var ANIMAL_TYPE_GOOMBA = 1;
 	var ANIMAL_TYPE_TURTLE = 2;
+	var ANIMAL_TYPE_MARIO= 3;
 	
 	// Movement direction
 	var MOVE_LEFT = -1;
@@ -39,6 +41,11 @@
 	var TURTLE_VELOCITY_X = .8; // The number of pixels a animal moves every frame
 	var TURTLE_TICK_FRAME_NUMBER = 24;
 	var TURTLE_IMAGE_NUMBER = 2;
+
+	var MARIO_SPRITE_X = 3;
+	var MARIO_SPRITE_Y = 0;
+	var MARIO_VELOCITY_X = 0; // The number of pixels a animal moves every frame
+	var MARIO_TICK_FRAME_NUMBER = 24;
 	
 	var CELL_PLATFORM = 1;
 	var CELL_BLOCK = 2;
@@ -58,14 +65,17 @@
     	]
 	};
 	var endBlock = {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 9, 10, 11, 0, 0, 0, 4, 0, 0, 0, 16, 0, 13, 14, 15, 0, 0, 0, 8, 0, 45, 0, 16, 0, 13, 14, 15, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 19, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15],
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 9, 10, 11, 0, 0, 0, 0, 0, 0, 0, 16, 0, 13, 14, 15, 0, 0, 0, 0, 0, 45, 0, 16, 0, 13, 14, 15, 9, 10, 10, 20, 10, 10, 10, 10, 10, 10, 10, 19, 13, 14, 14, 24, 14, 14, 14, 14, 14, 14, 14, 15, 13, 14, 14, 24, 14, 14, 14, 14, 14, 14, 14, 15, 13, 14, 14, 24, 14, 14, 14, 14, 14, 14, 14, 15],
          "height":10,
          "width":12,
+ 		 "animalList": [
+       	 	{x: 3, y: 4, type: ANIMAL_TYPE_MARIO},
+     	 ]
 	};
 	var blockList = 
 	[
 	 	{	//block-2
-		    "data":[0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 9, 10, 11, 0, 12, 0, 0, 13, 14, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 33, 33, 13, 14, 15, 0, 16, 0, 0, 13, 14, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 12, 16, 0, 0, 13, 21, 10, 10, 19, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 21, 19, 16, 16, 0, 0, 13, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 16, 16, 0, 0, 18, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 10, 11, 0, 0, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 14, 15, 45, 0, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 25, 26, 26, 26, 26, 26, 27, 0],
+		    "data":[0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 0, 45, 45, 0, 0, 0, 0, 9, 10, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 9, 10, 11, 0, 12, 0, 0, 13, 14, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 33, 33, 13, 14, 15, 0, 16, 0, 0, 13, 14, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 14, 15, 12, 16, 0, 0, 13, 21, 10, 10, 19, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 21, 19, 16, 16, 0, 0, 13, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 16, 16, 0, 0, 18, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 10, 11, 0, 0, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 37, 13, 13, 15, 14, 15, 45, 0, 22, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 37, 25, 26, 26, 26, 26, 26, 27, 0],
 		    "height":11,
 		    "width":27,
 			"animalList": [
@@ -84,16 +94,16 @@
 	       	]
         },
         {	//block-4
-            "data":[0, 0, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 29, 30, 30, 31, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 10, 10, 10, 11, 0, 0, 9, 10, 11, 0, 0, 13, 14, 14, 15, 0, 0, 0, 41, 41, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 0, 41, 0, 0, 0, 0, 41, 0, 13, 14, 14, 14, 14, 14, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 14, 14, 14, 14, 14, 15, 33, 33, 13, 14, 15, 0, 0, 13, 14, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 14, 14, 14, 14, 14, 15, 37, 37, 13, 14, 15, 0, 9, 10, 10, 23, 15, 37, 37, 37, 37, 37, 37, 37, 37, 17, 10, 23, 14, 14, 21, 10, 19, 37, 37, 17, 23, 15, 0, 13, 14, 14, 15, 15, 37, 37, 37, 9, 11, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 15, 15, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 21, 19, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 13, 15, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 0],
-            "height":12,
+            "data":[0, 0, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 29, 30, 30, 31, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 10, 10, 10, 10, 11, 0, 0, 9, 10, 11, 0, 0, 0, 13, 14, 15, 0, 0, 0, 41, 41, 0, 0, 0, 13, 14, 14, 14, 14, 14, 14, 15, 0, 0, 13, 14, 15, 0, 0, 0, 13, 14, 15, 0, 41, 0, 0, 0, 0, 41, 0, 13, 14, 14, 14, 14, 14, 14, 15, 0, 0, 13, 14, 15, 0, 0, 9, 23, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 14, 14, 14, 14, 14, 15, 33, 33, 13, 14, 15, 0, 0, 13, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 14, 14, 14, 14, 14, 15, 37, 37, 13, 14, 15, 0, 0, 13, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 14, 14, 14, 14, 14, 15, 37, 37, 13, 14, 15, 0, 9, 10, 10, 23, 15, 37, 37, 37, 37, 37, 37, 37, 37, 17, 10, 23, 14, 14, 21, 10, 19, 37, 37, 17, 23, 15, 0, 13, 14, 14, 15, 15, 37, 37, 37, 9, 11, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 15, 15, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 21, 19, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 13, 14, 14, 13, 15, 37, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 14, 14, 13, 14, 15, 37, 37, 13, 15, 15, 0, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 15, 0],
+            "height":13,
             "width":27,
 			 "animalList": [
-         	 	{x: 18, y: 5, type: ANIMAL_TYPE_TURTLE},
+         	 	{x: 18, y: 6, type: ANIMAL_TYPE_TURTLE},
 	       	 	{x: 7, y: -1, type: ANIMAL_TYPE_GOOMBA},
 	       	]
         },
         {	//block-5
-            "data":[0, 0, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 0, 9, 10, 23, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 21, 11, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 17, 23, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 37, 37, 37, 37, 37, 17, 10, 19, 37, 37, 13, 21, 19, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 9, 11, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0],
+            "data":[0, 0, 0, 0, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 31, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 9, 10, 11, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 15, 0, 0, 13, 14, 14, 15, 33, 33, 33, 33, 33, 33, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 33, 33, 13, 14, 15, 0, 9, 10, 23, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 15, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 0, 13, 14, 15, 14, 21, 11, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 37, 37, 13, 14, 15, 37, 37, 17, 23, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 37, 37, 37, 37, 37, 17, 10, 19, 37, 37, 13, 21, 19, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 9, 11, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0, 13, 14, 15, 14, 13, 15, 37, 37, 13, 15, 37, 37, 37, 13, 14, 15, 37, 37, 13, 13, 15, 37, 37, 13, 15, 15, 0], 
             "height":12,
             "width":27,
 			"animalList": [
@@ -120,7 +130,7 @@
 	       	]
      },
      {	//block-8
-         "data":[0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 33, 33, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 37, 37, 15, 0, 0, 0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 13, 37, 37, 15, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 13, 37, 37, 15, 0, 0, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 13, 37, 37, 21, 10, 11, 0, 0, 0, 0, 0, 13, 14, 14, 15, 0, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 21, 10, 11, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 21, 10, 10, 23, 13, 37, 37, 13, 14, 15, 0, 9, 10, 11, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 21, 10, 10, 23, 37, 37, 13, 14, 15, 0, 13, 33, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 29, 30, 30, 30, 31, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 18, 14, 13, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 22, 14, 13, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 22, 14, 13, 37, 15, 0],
+         "data":[0, 0, 0, 0, 0, 9, 10, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 13, 33, 33, 15, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 13, 37, 37, 15, 0, 16, 0, 0, 0, 0, 0, 9, 10, 10, 11, 16, 13, 37, 37, 15, 0, 16, 0, 41, 0, 0, 0, 13, 14, 14, 15, 16, 13, 37, 37, 15, 0, 16, 0, 0, 0, 0, 0, 13, 14, 14, 15, 16, 13, 37, 37, 21, 10, 11, 0, 41, 0, 0, 0, 13, 14, 14, 15, 16, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 21, 10, 11, 13, 37, 37, 13, 14, 15, 0, 41, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 0, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 41, 0, 0, 0, 13, 14, 13, 14, 15, 13, 37, 37, 13, 14, 15, 0, 0, 45, 0, 0, 13, 21, 10, 10, 23, 13, 37, 37, 13, 14, 15, 0, 9, 10, 11, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 14, 14, 15, 13, 37, 37, 13, 14, 15, 0, 13, 14, 15, 0, 13, 13, 21, 10, 10, 23, 37, 37, 13, 14, 15, 0, 13, 33, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 29, 30, 30, 30, 31, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 18, 14, 13, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 22, 14, 13, 37, 15, 0, 13, 13, 13, 14, 14, 15, 37, 37, 13, 14, 22, 14, 13, 37, 15, 0],
          "height":20,
          "width":16,
 		   "animalList": [
@@ -129,20 +139,28 @@
 	       	]
     },
     {	//block-9
-        "data":[0, 0, 0, 0, 9, 11, 29, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 9, 11, 0, 0, 0, 0, 0, 0, 13, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 0, 0, 0, 0, 13, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 0, 0, 9, 10, 11, 15, 37, 37, 37, 37, 37, 37, 37, 29, 30, 31, 13, 15, 0, 0, 0, 0, 13, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 9, 10, 23, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 29, 30, 30, 31, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 29, 30, 31, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 9, 10, 11, 0, 13, 21, 10, 23, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 29, 30, 31, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 18, 37, 37, 37, 37, 29, 30, 31, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 22, 37, 37, 37, 37, 37, 18, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 22, 37, 37, 37, 37, 37, 22, 37, 13, 14, 15, 0],
+        "data":[0, 0, 0, 0, 9, 11, 29, 30, 30, 30, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 9, 11, 0, 0, 0, 12, 0, 0, 13, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 0, 16, 0, 45, 13, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 0, 16, 9, 10, 23, 15, 37, 37, 37, 37, 37, 37, 37, 29, 30, 31, 13, 15, 0, 0, 0, 16, 13, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 9, 10, 23, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 29, 30, 30, 31, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 15, 15, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 0, 0, 13, 14, 15, 14, 29, 30, 31, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 15, 45, 0, 13, 14, 15, 14, 15, 18, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 17, 10, 11, 0, 13, 21, 10, 23, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 37, 37, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 29, 30, 31, 37, 37, 37, 37, 37, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 18, 37, 37, 37, 37, 29, 30, 31, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 22, 37, 37, 37, 37, 37, 18, 37, 13, 14, 15, 0, 13, 13, 14, 15, 15, 22, 37, 37, 22, 37, 37, 37, 37, 37, 22, 37, 13, 14, 15, 0],
         "height":19,
         "width":20,
 		   "animalList": [
-                {x: 9, y: 7, type: ANIMAL_TYPE_TURTLE},
+                {x: 9, y: 6, type: ANIMAL_TYPE_TURTLE},
 	       	 	{x: 7, y: -1, type: ANIMAL_TYPE_GOOMBA},
 	       	]
    }
-    ]
+    ];
+	
+	var LEVEL_BLOCK_NUMBER = {
+		1: blockList.length - 5,
+		2: blockList.length - 3,
+		3: blockList.length
+	}
+	var MAX_LEVEL_NUMBER = 3;
 
 	// Specific tiles list
-	var PLATFORM_TILE_LIST = [9, 10, 11, 17, 19, 21, 23];
+	var PLATFORM_TILE_LIST = [9, 10, 11, 17, 19, 20, 21, 23];
 	var BLOCK_TILE_LIST = [18, 22, 25, 26, 27, 29, 30, 31];
 	var ANIMATED_TILE_LIST = [33, 37, 41, 45];
+	var WORLD_DESIGN_TILE_LIST = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27];
 
 	var TILE_PER_LINE = 4; // The number of tile per line on tile image
 	
@@ -150,22 +168,27 @@
 	 * The world map
 	 */
 	var WorldMap = function() {
-		// World is made of 2 images, to animate some elements (waterfalls...)
-		this.currentAnimationSprite = 0; // The current frame of current image, to know when we have to change it
-		this.currentDisplayedImage = 0; // The current displayed image (0 or 1)
-		this.imageList = []; // The world image list
 	};
 	
 	WorldMap.prototype.create = function() {
+		// World is made of 4 images, to animate some elements (waterfalls...)
+		this.currentAnimationSprite = 0; // The current frame of current image, to know when we have to change it
+		this.currentDisplayedImage = 0; // The current displayed image (0 or 1)
+		this.imageList = []; // The world image list
 		// Sets the blocks componing the world
 		function shuffle(o){
 		    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
 		    return o;
 		}
-		this.blockList = shuffle(blockList);
+		var randomBlockList = shuffle(blockList);
+		this.blockList = [];
+		for(var index = 0; index < LEVEL_BLOCK_NUMBER[game.levelNumber]; ++index) {
+			this.blockList.push(randomBlockList[index]);
+		}
 		this.blockList.push(startBlock);
 		this.blockList.unshift(endBlock);
-
+		this.designOffset = Math.random() > 0.5 ? 0 : 12;
+		
 		this.width = 0;
 		this.height = 0;
 		this.cellList = [];
@@ -213,10 +236,9 @@
 	WorldMap.prototype.generateImage = function(offset) {
 		// Inits world images. Creates a tmp canvas to draw full world images
 		var canvas = document.createElement("canvas");
-		canvas.width = this.width * CELL_SIZE;
-		canvas.height = this.height * CELL_SIZE;
+		canvas.width = this.width * CELL_SIZE / 2;
+		canvas.height = this.height * CELL_SIZE / 2;
 		var context = canvas.getContext("2d");
-
 		for(var y in this.cellList) {
 			for(var x in this.cellList[y]) {
 				var tile = this.cellList[y][x] - 1;
@@ -228,7 +250,10 @@
 				}
 				var tileX = tile % TILE_PER_LINE;
 				var tileY = Math.floor(tile / TILE_PER_LINE);
-				context.drawImage(game.tileSet, tileX * CELL_SIZE, tileY * CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE);
+				if(WORLD_DESIGN_TILE_LIST.indexOf(tile + 1) !== -1) {
+					tileY += this.designOffset;
+				}
+				context.drawImage(game.tileSet, tileX * CELL_SIZE/ 2, tileY * TILE_SIZE, TILE_SIZE, TILE_SIZE, CELL_SIZE * x/2, CELL_SIZE * y/2, TILE_SIZE, TILE_SIZE);
 			}
 		}
 		var image = new Image();
@@ -254,6 +279,11 @@
 			this.x -= 1.2 * peach.moveDirection * PEACH_VELOCITY_X;
 		}
 		this.y = this.offsetY * CELL_SIZE + (peach.y < CENTER_Y_LIMIT ? CENTER_Y_LIMIT - peach.y : 0);
+
+		if((game.levelNumber < MAX_LEVEL_NUMBER && this.x > CELL_SIZE * 4) || (game.levelNumber >= MAX_LEVEL_NUMBER && this.x > CELL_SIZE * 5)) {
+			game.isLevelEnded = true;
+			game.endTime = +new Date();
+		}
 	};
 
 	// Inits canvas
@@ -285,6 +315,12 @@
 			this.speed = GOOMBA_VELOCITY_X;
 			this.height = 1;
 			break;
+		case ANIMAL_TYPE_MARIO:
+			this.spriteX = MARIO_SPRITE_X;
+			this.spriteY = MARIO_SPRITE_Y;
+			this.speed = MARIO_VELOCITY_X;
+			this.height = 2;
+			break;
 		}
 	};
 	Animal.prototype.updatePosition = function() {
@@ -308,7 +344,7 @@
 		var distanceToPeachY = this.y - peach.y;
 		if(distanceToPeachX > 0 && distanceToPeachX < CELL_SIZE && distanceToPeachY >= -CELL_SIZE && distanceToPeachY <= CELL_SIZE) {
 			this.isCollected = true;
-			++game.score;
+			++game.levelScore;
 		}
 	};
 	Animal.prototype.setOppositeDirection = function() {
@@ -321,36 +357,40 @@
 		this.goLeft = false;
 		this.goRight = false;
 		window.addEventListener('keydown', function(k) {
-			if(game.displayStartScreen && k.keyCode === 32) { // Space
-				game.displayStartScreen = false;
+			if(game.isLevelEnded) {
+				if(k.keyCode === 32) { // Space
+					game.nextLevel();
+				}
 				return;
+			}
+			if(game.displayStartScreen) {
+				if(k.keyCode === 32) { // Space
+					game.displayStartScreen = false;
+				}
+				return;
+			}
+			if(game.isOver) {
+				if(k.keyCode === 32) { // Space
+					game.start();
+				}	
 			}
 		    switch(k.keyCode) {
 	        	case 32: //space
 		        case 38: //up
 		        case 87: //W
 		        	// Player has to release and press again to make a new jump
-		        	if(game.displayStartScreen) {
-	        			return;
-		        	}
 		        	if(!this.isJumping) {
 			        	this.startJump();
 		        	}
 		            break;
 		        case 65: //A
 		        case 37: //left
-		        	if(game.displayStartScreen) {
-        				return;
-		        	}
 		        	this.goLeft = true;
 		        	this.goRight = false;
 		        	this.spriteDirection = MOVE_LEFT;
 		            break;
 		        case 39: //right
 		        case 68: //D
-		        	if(game.displayStartScreen) {
-        				return;
-		        	}
 		        	this.goLeft = false;
 		        	this.goRight = true;
 		        	this.spriteDirection = MOVE_RIGHT;
@@ -454,7 +494,12 @@
 		}
 		// At the bottom of the game = death, resets game
 		if(this.y > SCREEN_HEIGHT * CELL_SIZE) {
-			game.reset();
+			--game.lifeNumber;
+			if(game.lifeNumber <= 0) {
+				game.over();
+			} else {
+				game.reset();
+			}
 			return;
 		}
 
@@ -463,11 +508,8 @@
 			var bottomLeftCellState = worldMap.getCellState(- Math.floor(cellX + .4 * PEACH_WIDTH / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
 			var bottomRightCellState = worldMap.getCellState(- Math.floor(cellX - .4 * PEACH_WIDTH / CELL_SIZE), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
 			var bottomCellState = worldMap.getCellState(- Math.floor(cellX), Math.floor((this.y + PEACH_HEIGHT) / CELL_SIZE));
-			console.log(bottomCellState)
 			if(bottomCellState === CELL_PLATFORM || bottomLeftCellState === CELL_BLOCK || bottomRightCellState === CELL_BLOCK) {
-				console.log(this.currentVelocityY, this.y, this.y % CELL_SIZE);
 				if(this.currentVelocityY > 0 && ((this.y >= 0 && this.y % CELL_SIZE <= JUMP_IMPULSE) || (this.y < 0 && this.y % CELL_SIZE <= - JUMP_IMPULSE))) {
-					console.log('stop fall!');
 					this.stopFall();
 					this.currentSprite = 0;
 					hasTouchFloor = true;
@@ -491,20 +533,56 @@
 	 */
 	function Game() {
 		this.backgroundElement = document.getElementById('bg');
+		this.displayStartScreen = true;
 	};
 
 	Game.prototype.draw = function() {
 		if(!isWorldMapReady)
 			return;
-
+		var now = +new Date();
 		context.clearRect(0, 0, canvasWidth, canvasHeight);
+		
+		// Draws Mario behind world for when he leaves the level
+		for(var animalIndex in worldMap.animalList) {
+			var animal = worldMap.animalList[animalIndex];
+			if(animal.isCollected) {
+				continue;
+			}
+			context.save();
+			switch(animal.type) {
+			case ANIMAL_TYPE_TURTLE: 
+			case ANIMAL_TYPE_GOOMBA:
+				continue;
+				break;
+			case ANIMAL_TYPE_MARIO:
+				if(++animal.currentAnimationSprite > MARIO_TICK_FRAME_NUMBER) {
+					context.translate(Math.floor(worldMap.x) + animal.x,  worldMap.y + animal.y);
+					context.scale(-1, 1);
+				} else {
+					context.translate(Math.floor(worldMap.x) + animal.x - CELL_SIZE,  worldMap.y + animal.y);
+				}
+				if(this.isLevelEnded && this.levelNumber < MAX_LEVEL_NUMBER) {
+					animal.y += 2;
+					var marioY = animal.y;
+				}
+				break;
+			}
+			context.translate(0, - worldMap.offsetY * CELL_SIZE);
+			context.drawImage(game.tileSet, (animal.spriteX + animal.currentDisplayedImage) * TILE_SIZE, animal.spriteY * TILE_SIZE, TILE_SIZE, TILE_SIZE * animal.height, 0, 0, CELL_SIZE, CELL_SIZE * animal.height);
+			context.restore();
+		}
+
+		
 		// Draws world
 		if(++worldMap.currentAnimationSprite > WORLD_TICK_FRAME_NUMBER) {
 			worldMap.currentAnimationSprite = 0;
 			worldMap.currentDisplayedImage = ++worldMap.currentDisplayedImage % WORLD_IMAGE_NUMBER;
 		}
 		var worldImage = worldMap.imageList[worldMap.currentDisplayedImage];
-		context.drawImage(worldImage, Math.floor(worldMap.x), worldMap.y);
+		context.save()
+		context.scale(2,2);
+		context.drawImage(worldImage, Math.floor(worldMap.x) / 2, worldMap.y / 2);
+		context.restore();
 
 		// Draws animals
 		for(var animalIndex in worldMap.animalList) {
@@ -534,55 +612,87 @@
 					context.translate(Math.floor(worldMap.x) + animal.x - CELL_SIZE,  worldMap.y + animal.y);
 				}
 				break;
+			case ANIMAL_TYPE_MARIO:
+				continue;
+				break;
 			}
 			context.translate(0, - worldMap.offsetY * CELL_SIZE);
-			context.drawImage(game.tileSet, (animal.spriteX + animal.currentDisplayedImage) * CELL_SIZE, animal.spriteY * CELL_SIZE, CELL_SIZE, CELL_SIZE * animal.height, 0, 0, CELL_SIZE, CELL_SIZE * animal.height);
+			context.drawImage(game.tileSet, (animal.spriteX + animal.currentDisplayedImage) * TILE_SIZE, animal.spriteY * TILE_SIZE, TILE_SIZE, TILE_SIZE * animal.height, 0, 0, CELL_SIZE, CELL_SIZE * animal.height);
 			context.restore();
 		}
 
 		// Draws peach
 		context.save();
-		context.translate(peach.x, Math.max(CENTER_Y_LIMIT, peach.y));
+		context.translate(peach.x, Math.floor(Math.max(CENTER_Y_LIMIT, peach.y)));
 		if(peach.spriteDirection === MOVE_LEFT) {
 			context.scale(-1, 1);
 		}
-		context.drawImage(game.tileSet, peach.currentSprite * PEACH_WIDTH, 0, PEACH_WIDTH, PEACH_HEIGHT, -PEACH_WIDTH / 2, 0, PEACH_WIDTH, PEACH_HEIGHT);
+		context.drawImage(game.tileSet, peach.currentSprite * PEACH_WIDTH / 2, 0, PEACH_WIDTH / 2, PEACH_HEIGHT / 2, -PEACH_WIDTH / 2, 0, PEACH_WIDTH, PEACH_HEIGHT);
 		context.restore();
-
-		textManager.text({ctx: context, x: 10, y: 10, text: "SCORE: " + this.score, valign: 'top', halign: 'left', scale: 2, vspacing: 10, hspacing: 2, color: 'rgba(255,255,255)'});
-
-		if(this.displayStartScreen) {
+		
+		if(!this.isOver) {
+			textManager.text({ctx: context, x: 10, y: 10, text: 'COLLECTED: ' + this.levelScore + '/' + (2 * LEVEL_BLOCK_NUMBER[game.levelNumber] + 2), valign: 'top', halign: 'left', scale: 2, vspacing: 10, hspacing: 2, color: 'rgb(255,255,255)'});
+			textManager.text({ctx: context, x: 550, y: 10, text: 'LIFE: ' + this.lifeNumber, valign: 'top', halign: 'left', scale: 2, vspacing: 10, hspacing: 2, color: 'rgb(255,255,255)'});
+			textManager.text({ctx: context, x: 450, y: 10, text: 'LEVEL: ' + this.levelNumber, valign: 'top', halign: 'left', scale: 2, vspacing: 10, hspacing: 2, color: 'rgb(255,255,255)'});
+		}
+		if(this.displayStartScreen || this.isOver) {
 			context.beginPath();
 			context.rect(0, 0, canvasWidth, canvasHeight);
 			context.fillStyle = 'rgba(0, 0, 0, 0.8)';
 			context.fill();
 			
-			textManager.text({ctx: context, x: 210, y: 30, text: "SUPER", valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(0, 20, 222)'});
-			textManager.text({ctx: context, x: 210, y: 65, text: "PEACH", valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(29, 135, 0)'});
-			textManager.text({ctx: context, x: 320, y: 65, text: "WORLD", valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(228, 0, 10)'});
-			textManager.text({ctx: context, x: canvasWidth / 2, y: 120, text: "PEACH IS BORED AND DECIDES TO FIND MARIO.\nAS HER DRESS HAS NO POCKET SHE CANNOT COLLECT COINS!\nBUT AS A PRINCESS SHE CAN COLLECT THE ANIMALS SHE MEETS.", valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(255, 255,255)'});
-			textManager.text({ctx: context, x: canvasWidth / 2, y: 220, text: "FIND MARIO WHILE COLLECTING GOOMBAS AND TURTLES.", valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(255, 196,0)'});
-			textManager.text({ctx: context, x: canvasWidth / 2, y: 250, text: "PRESS SPACE TO START", valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(29, 135, 0)'});
+			textManager.text({ctx: context, x: 210, y: 30, text: 'SUPER', valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(0, 20, 222)'});
+			textManager.text({ctx: context, x: 210, y: 65, text: 'PEACH', valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(29, 135, 0)'});
+			textManager.text({ctx: context, x: 320, y: 65, text: 'WORLD', valign: 'top', halign: 'left', scale: 5, vspacing: 10, hspacing: 2, color: 'rgb(228, 0, 10)'});
+			
+			if(this.displayStartScreen) {
+				textManager.text({ctx: context, x: canvasWidth / 2, y: 120, text: 'PEACH IS BORED AND DECIDES TO FIND MARIO.\nAS HER DRESS HAS NO POCKET SHE CANNOT COLLECT COINS!\nBUT AS A PRINCESS SHE CAN COLLECT THE ANIMALS SHE MEETS.', valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(255, 255,255)'});
+				textManager.text({ctx: context, x: canvasWidth / 2, y: 220, text: 'FIND MARIO WHILE COLLECTING GOOMBAS AND TURTLES.', valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(255, 196,0)'});
+				textManager.text({ctx: context, x: 20, y: 330, text: 'MOVE: ARROWS/WASD\nJUMP: SPACE/UP', valign: 'top', halign: 'left', scale: 2, vspacing: 12, hspacing: 2, color: 'rgba(255, 255,255, 0.7)'});
+			}
+			if(this.isOver) {
+				textManager.text({ctx: context, x: canvasWidth / 2, y: 170, text: 'GAME OVER', valign: 'top', halign: 'center', scale: 4, vspacing: 12, hspacing: 2, color: 'rgb(255, 196,0)'});
+			}
+			textManager.text({ctx: context, x: canvasWidth / 2, y: 250, text: 'PRESS SPACE TO ' + (this.isOver ? 'RE' : '') + 'START', valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(29, 135, 0)'});
+		}
+		if(this.isLevelEnded) {
+			var y = 120;
+			var text = '';
+			var endText = 'PRESS SPACE TO CONTINUE';
+			var endTextTime = 2000;
+			if(now -this.endTime > 1000) {
+				text = 'OH! MARIO';
+			}
+			if(this.levelNumber === MAX_LEVEL_NUMBER) {
+				endText = 'THANK YOU FOR PLAYING! PRESS SPACE TO RESTART GAME IN 2X SPEED!';
+				endTextTime = 4500;
+				y = 50;
+				if(now - this.endTime > 2000) {
+					text = 'OH! MARIO\nMARIO';
+				}
+				if(now - this.endTime > 3500) {
+					text = 'OH! MARIO\nMARIO\n\nTHANK YOU PEACH';
+				}
+			}
+			textManager.text({ctx: context, x: canvasWidth / 2, y: y, text: text, valign: 'top', halign: 'center', scale: 4, vspacing: 12, hspacing: 2, color: 'rgb(40, 40, 40)'});
 
-			textManager.text({ctx: context, x: 20, y: 330, text: "MOVE: ARROWS/WASD\nJUMP: SPACE/UP", valign: 'top', halign: 'left', scale: 2, vspacing: 12, hspacing: 2, color: 'rgba(255, 255,255, 0.7)'});
-
-//			if(++worldMap.currentAnimationSprite > START_TEXT_TICK_FRAME_NUMBER) {
-//				worldMap.currentAnimationSprite = 0;
-//				worldMap.currentDisplayedImage = ++worldMap.currentDisplayedImage % WORLD_IMAGE_NUMBER;
-//			}
+			if(now - this.endTime > endTextTime) {
+				textManager.text({ctx: context, x: canvasWidth / 2, y: 350, text: endText, valign: 'top', halign: 'center', scale: 2, vspacing: 12, hspacing: 2, color: 'rgb(70, 70, 70)'});
+			}
 		}
 	}
-	
 	Game.prototype.updateBackgroundPosition = function() {
 		this.backgroundElement.style.backgroundPositionX = Math.floor(0.5 * worldMap.x) + 'px';
-		this.backgroundElement.style.backgroundPositionY = Math.floor(0.3 * worldMap.y ) + 'px';
+		this.backgroundElement.style.backgroundPositionY = Math.floor(0.3 * worldMap.y + CELL_SIZE) + 'px';
 		document.getElementById('game').style.backgroundPositionY = Math.floor(0.05 * worldMap.y ) + 'px';
 	}
-	
+
 	Game.prototype.reset = function() {
 		// Initial position, far on right (peach starts on right side on go back to left, from negative x value to 0
 		worldMap.x = - (worldMap.width - SCREEN_WIDTH) * CELL_SIZE;
-
+		for(var animalIndex in worldMap.animalList) {
+			worldMap.animalList[animalIndex].isCollected = false;
+		}
 		// Inits peach
 		peach.currentAnimationSprite = 0;
 		peach.currentSprite = 0;
@@ -594,35 +704,66 @@
 		peach.spriteDirection = MOVE_LEFT; // when movement is stopped, keeps the curret sprite direction
 		peach.hasBlockCollision = false;
 
-		this.score = 0;
+		this.levelScore = 0;
+		this.isLevelEnded = false;
 	}
 
 	Game.prototype.start = function() {
+		worldMap = new WorldMap();
+		peach = new Peach();
 		// Loads assets
-		this.displayStartScreen = true;
+		this.levelNumber = 0;
+		this.score = 0;
+		this.isOver = false;
+		this.levelScore = 0;
+		this.lifeNumber = 3;
 		this.tileSet = new Image();
 		this.tileSet.src = 'assets/img/tileset.png';
 		this.tileSet.addEventListener('load', function() {
-			worldMap.create();
-			this.reset();
+			this.nextLevel();
 			this.loop();
 		}.bind(this));
 	}
+	Game.prototype.nextLevel = function() {
+		// Loads assets
+		this.isLevelEnded = false;
+		this.endTime = 0;
+		this.score += this.levelScore;
+		this.levelScore = 0;
+		++this.levelNumber;
+		if(this.levelNumber > MAX_LEVEL_NUMBER) {
+			this.start();
+		}
+		worldMap.create();
+		this.reset();
+	}
+	Game.prototype.over = function() {
+		this.isOver = true;
+		context.restore();
+		context.beginPath();
+		context.rect(0, 0, canvasWidth, canvasHeight);
+		context.fillStyle = 'rgba(0, 0, 0, 0.8)';
+		context.fill();
+	}
 	Game.prototype.loop = function() {
-		window.requestAnimationFrame(this.loop.bind(this));
-		peach.updatePosition();
-		worldMap.updatePosition();
-		for(var index in worldMap.animalList) {
-			if(!worldMap.animalList[index].isCollected) {
-				worldMap.animalList[index].updatePosition();
+		if(!this.isOver) {
+			window.requestAnimationFrame(this.loop.bind(this));
+		}
+		if(!this.isLevelEnded) {
+			peach.updatePosition();
+			worldMap.updatePosition();
+			for(var index in worldMap.animalList) {
+				if(!worldMap.animalList[index].isCollected) {
+					worldMap.animalList[index].updatePosition();
+				}
 			}
 		}
 		this.updateBackgroundPosition();
 		this.draw();
 	}
 
-	var worldMap = new WorldMap();
-	var peach = new Peach();
+	var worldMap;
+	var peach;
 	var game = new Game();
 	game.start();
 	
@@ -685,7 +826,7 @@
 				lineWidth = (line.length - 1) * opt.hspacing,
 				x = opt.x,
 				y = opt.y + ( letterSize + opt.vspacing ) * i;
-			
+
 			for( var letterNumber = 0; letterNumber < line.length; ++letterNumber ) {
 				var letter = textManager.definitions.letters[ ( line.charAt( letterNumber ) ) ] || textManager.definitions.letters[ 'unknown' ];
 				lineWidth += letter[0].length * opt.scale;
