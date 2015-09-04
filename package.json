@@ -1,9 +1,9 @@
 {
-  "name": "un-fut-en-or",
-  "version": "0.0.1",
+  "name": "super-peach-world",
+  "version": "1.0.0",
   "description": "",
   "author": {
-    "name": "Adfab Connect"
+    "name": "Jonathan Vallet"
   },
   "dependencies": {
     "del": "^1.1.1",
